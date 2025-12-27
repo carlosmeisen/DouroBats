@@ -30,3 +30,14 @@ dependencyResolutionManagement {
 }
 
 include(":composeApp")
+
+// Core modules
+include(":core:domain")
+include(":core:data")
+include(":core:network")
+include(":core:ui")
+
+// Feature modules
+include(":features:home")
+include(":features:schedule")
+include(":features:settings")

@@ -20,6 +20,10 @@ gradlePlugin {
             id = "pt.dourobats.app.android.application"
             implementationClass = "AndroidApplicationConventionPlugin"
         }
+        register("androidLibrary") {
+            id = "pt.dourobats.app.android.library"
+            implementationClass = "AndroidLibraryConventionPlugin"
+        }
         register("composeMultiplatform") {
             id = "pt.dourobats.app.compose"
             implementationClass = "ComposeMultiplatformConventionPlugin"
