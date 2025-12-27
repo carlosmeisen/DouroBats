@@ -113,17 +113,113 @@ The convention plugins automatically configure:
 # Build release APK
 ./gradlew :composeApp:assembleRelease
 
-# Run tests
+# Build specific module
+./gradlew :core:domain:build
+
+# Run tests for all modules
 ./gradlew test
+
+# Run tests for specific module
+./gradlew :core:domain:test
 
 # Clean build
 ./gradlew clean build
 ```
 
-## Project Structure (shared/commonMain)
-- `pt.dourobats.app.core.domain`: Interfaces, Models, and UseCases.
-- `pt.dourobats.app.core.data`: Repository implementations and Data Sources.
-- `pt.dourobats.app.features`: Feature-based UI (Home, Schedule, Settings).
+## Adding New Modules
+
+### Create a new feature module:
+1. Create directory: `features/new-feature/`
+2. Add `build.gradle.kts`:
+```kotlin
+plugins {
+    id("pt.dourobats.app.android.library")
+    id("pt.dourobats.app.kmp")
+    id("pt.dourobats.app.compose")
+}
+
+kotlin {
+    sourceSets {
+        commonMain.dependencies {
+            implementation(projects.core.domain)
+            implementation(projects.core.ui)
+            implementation(libs.koin.core)
+            implementation(libs.koin.compose)
+        }
+    }
+}
+
+android {
+    namespace = "pt.dourobats.app.features.newfeature"
+}
+```
+3. Add to `settings.gradle.kts`:
+```kotlin
+include(":features:new-feature")
+```
+4. Add dependency in `composeApp/build.gradle.kts`:
+```kotlin
+implementation(projects.features.newFeature)
+```
+
+## Multi-Module Architecture
+
+This project follows a **multi-module architecture** for better separation of concerns, scalability, and testability.
+
+### 📊 Architecture Diagrams
+View detailed architecture and UI flow diagrams in the `/docs` folder:
+- **[Architecture Overview](docs/architecture.md)**: Module structure and dependencies (Mermaid diagrams)
+- **[UI Flow](docs/ui-flow.md)**: User navigation and data flow diagrams
+
+### Module Structure
+```
+DouroBats/
+├── composeApp/              # Main Android/iOS application
+├── core/
+│   ├── domain/              # Domain models, use cases, repository interfaces
+│   ├── data/                # Repository implementations
+│   ├── network/             # API clients and DTOs
+│   └── ui/                  # Shared UI components and theme
+├── features/
+│   ├── home/                # Home feature module
+│   ├── schedule/            # Schedule/Calendar feature
+│   └── settings/            # Settings feature
+└── build-logic/             # Convention plugins
+```
+
+### Module Responsibilities
+
+#### 🎯 composeApp (Application)
+- App entry point (Android + iOS)
+- App-level navigation
+- Dependency injection configuration
+- Aggregates all feature modules
+
+#### 🏗️ core:domain (Pure Kotlin)
+- Domain models (`TrainingSession`, `User`, `Team`)
+- Repository interfaces
+- Use cases (business logic)
+- **No platform dependencies**
+
+#### 📦 core:data (KMP)
+- Repository implementations
+- Data source coordination (local/remote)
+- Domain model mappers
+
+#### 🌐 core:network (KMP)
+- API clients (future: Ktor)
+- Network DTOs
+- API endpoint definitions
+
+#### 🎨 core:ui (KMP - Compose)
+- Material 3 theme (`DouroBatsTheme`)
+- Shared composable components
+- Design system (colors, typography, spacing)
+
+#### 🏠 features:* (KMP - Compose)
+- Feature-specific UI and ViewModels
+- Isolated feature logic
+- Can be developed independently
 
 ## Development Rules
 1. **SOLID Principles:** Use Interfaces for all Repositories and Services to allow easy swapping from Local to Remote API later.
