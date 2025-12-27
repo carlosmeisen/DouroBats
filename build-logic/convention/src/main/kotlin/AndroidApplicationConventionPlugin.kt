@@ -3,6 +3,9 @@ import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
+import org.gradle.api.artifacts.VersionCatalog
+import org.gradle.api.artifacts.VersionCatalogsExtension
+import org.gradle.kotlin.dsl.getByType
 
 class AndroidApplicationConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
@@ -10,6 +13,8 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
             with(pluginManager) {
                 apply("com.android.application")
             }
+
+            val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
 
             extensions.configure<ApplicationExtension> {
                 compileSdk = libs.findVersion("android-compileSdk").get().toString().toInt()
@@ -38,7 +43,4 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
             }
         }
     }
-
-    private val Project.libs
-        get() = extensions.getByName("libs") as org.gradle.accessors.dm.LibrariesForLibs
 }

@@ -78,6 +78,48 @@ build-logic/
 ✅ Easier maintenance and updates
 ✅ Reduced boilerplate in module build files
 
+### How to Use Convention Plugins in New Modules
+When creating a new module, apply the appropriate convention plugins:
+
+```kotlin
+// For a KMP library module with Compose
+plugins {
+    id("pt.dourobats.app.kmp")
+    id("pt.dourobats.app.compose")
+}
+```
+
+```kotlin
+// For an Android application module
+plugins {
+    id("pt.dourobats.app.android.application")
+    id("pt.dourobats.app.kmp")
+    id("pt.dourobats.app.compose")
+}
+```
+
+The convention plugins automatically configure:
+- Target platforms (Android, iOS)
+- JVM target (11)
+- Common dependencies for each layer
+- SDK versions (from version catalog)
+- Build configurations
+
+## Building the Project
+```bash
+# Build Android app
+./gradlew :composeApp:assembleDebug
+
+# Build release APK
+./gradlew :composeApp:assembleRelease
+
+# Run tests
+./gradlew test
+
+# Clean build
+./gradlew clean build
+```
+
 ## Project Structure (shared/commonMain)
 - `pt.dourobats.app.core.domain`: Interfaces, Models, and UseCases.
 - `pt.dourobats.app.core.data`: Repository implementations and Data Sources.

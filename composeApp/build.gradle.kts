@@ -1,6 +1,6 @@
 plugins {
-    id("pt.dourobats.app.kmp")
     id("pt.dourobats.app.android.application")
+    id("pt.dourobats.app.kmp")
     id("pt.dourobats.app.compose")
 }
 
