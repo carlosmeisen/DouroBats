@@ -87,3 +87,52 @@ graph TD
 - Settings screen
 - SettingsViewModel
 - Profile management
+
+---
+
+## MVP Feature Set
+
+```mermaid
+mindmap
+    root((DouroBats MVP))
+        Auth
+            Splash Screen
+            Login/Logout
+            Session Management
+        Home
+            Welcome View
+            Quick Stats
+            Recent Activity
+        Training Sessions
+            Calendar View
+            Session List
+            Session Details
+            Schedule Training
+        Settings
+            Profile View
+            User Details
+            Logout
+```
+
+### Core Features for MVP
+
+#### Authentication Flow
+- Splash screen on app launch
+- Login/Logout functionality
+- Session persistence and management
+
+#### Home Screen
+- Welcome message and dashboard
+- Quick stats overview
+- Recent training activity
+
+#### Training Sessions
+- View all training sessions in calendar format
+- Browse session list
+- View detailed session information
+- Schedule new training sessions
+
+#### Settings
+- View user profile and details
+- Manage preferences
+- Logout functionality
