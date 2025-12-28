@@ -1,15 +1,11 @@
 package pt.dourobats.app
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import pt.dourobats.app.features.home.HomeScreen
 import pt.dourobats.app.features.schedule.ScheduleScreen
@@ -40,7 +36,7 @@ private fun MainApp() {
             NavigationBar {
                 Screen.entries.forEach { screen ->
                     NavigationBarItem(
-                        icon = { Icon(screen.icon, contentDescription = screen.title) },
+                        icon = { Text(screen.emoji) },
                         label = { Text(screen.title) },
                         selected = selectedScreen == screen,
                         onClick = { selectedScreen = screen }
@@ -78,8 +74,8 @@ private fun LoginScreen(onLoginSuccess: () -> Unit) {
     }
 }
 
-private enum class Screen(val title: String, val icon: ImageVector) {
-    Home("Home", Icons.Default.Home),
-    Training("Training", Icons.Default.CalendarMonth),
-    Settings("Settings", Icons.Default.Settings)
+private enum class Screen(val title: String, val emoji: String) {
+    Home("Home", "\uD83C\uDFE0"),
+    Training("Training", "\uD83C\uDFC0"),
+    Settings("Settings", "⚙️")
 }
