@@ -8,6 +8,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import dourobats.features.schedule.generated.resources.Res
+import dourobats.features.schedule.generated.resources.training_coming_soon
+import dourobats.features.schedule.generated.resources.training_title
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun ScheduleScreen(
@@ -19,13 +23,13 @@ fun ScheduleScreen(
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = "Training Schedule",
+            text = stringResource(Res.string.training_title),
             style = MaterialTheme.typography.headlineLarge,
             textAlign = TextAlign.Center
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "Calendar view coming soon...",
+            text = stringResource(Res.string.training_coming_soon),
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center
         )

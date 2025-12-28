@@ -6,6 +6,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import dourobats.core.ui.generated.resources.Res
+import dourobats.core.ui.generated.resources.login_button_temp
+import dourobats.core.ui.generated.resources.login_title
+import dourobats.core.ui.generated.resources.nav_home
+import dourobats.core.ui.generated.resources.nav_settings
+import dourobats.core.ui.generated.resources.nav_training
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import pt.dourobats.app.core.ui.theme.AppTheme
 import pt.dourobats.app.features.home.HomeScreen
@@ -38,7 +45,7 @@ private fun MainApp() {
                 Screen.entries.forEach { screen ->
                     NavigationBarItem(
                         icon = { Text(screen.emoji) },
-                        label = { Text(screen.title) },
+                        label = { Text(stringResource(screen.titleRes)) },
                         selected = selectedScreen == screen,
                         onClick = { selectedScreen = screen }
                     )
@@ -65,18 +72,18 @@ private fun LoginScreen(onLoginSuccess: () -> Unit) {
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = "DouroBats Login",
+            text = stringResource(Res.string.login_title),
             style = MaterialTheme.typography.headlineLarge
         )
         Spacer(modifier = Modifier.height(16.dp))
         Button(onClick = onLoginSuccess) {
-            Text("Login (Temporary)")
+            Text(stringResource(Res.string.login_button_temp))
         }
     }
 }
 
-private enum class Screen(val title: String, val emoji: String) {
-    Home("Home", "\uD83C\uDFE0"),
-    Training("Training", "\uD83C\uDFD0"),
-    Settings("Settings", "⚙️")
+private enum class Screen(val titleRes: org.jetbrains.compose.resources.StringResource, val emoji: String) {
+    Home(Res.string.nav_home, "\uD83C\uDFE0"),
+    Training(Res.string.nav_training, "\uD83C\uDFD0"),
+    Settings(Res.string.nav_settings, "⚙️")
 }
