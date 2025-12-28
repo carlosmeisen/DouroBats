@@ -21,6 +21,15 @@ captures/
 .externalNativeBuild
 .cxx
 
+# Android Signing & Security
+*.jks
+*.keystore
+key.properties
+keystore.properties
+google-services.json
+*.p12
+*.pem
+
 # IntelliJ IDEA
 .idea
 *.iws
@@ -63,3 +72,15 @@ node_modules/
 
 # Configuration cache
 .gradle/configuration-cache
+
+# Environment & Secrets
+.env
+.env.local
+.env.*.local
+secrets.properties
+credentials.json
+firebase-credentials.json
+
+# API Keys (just in case)
+**/apikeys/
+**/secrets/
