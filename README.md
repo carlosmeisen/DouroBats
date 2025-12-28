@@ -10,6 +10,9 @@ Built using **Compose Multiplatform (Android/iOS)** following **SOLID** principl
 - **DI:** Koin 4.1.0-Beta1 (Multiplatform)
 - **Navigation:** Navigation Compose 2.8.5 (androidx.navigation)
 - **State:** Kotlin Flows & StateFlow
+- **Resources:** Compose Resources (fonts, strings, images)
+- **i18n:** 5 language variants (en-US, en-GB, pt-BR, pt-PT, es-ES)
+- **Typography:** Custom Montserrat font family
 - **Test Framework:** JUnit 4.13.2 (Android/Common) + Kotlin Coroutines Test 1.10.2
 - **Kotlin:** 2.3.0
 - **Serialization:** kotlinx-serialization 1.8.0
@@ -212,13 +215,16 @@ DouroBats/
 - API endpoint definitions
 
 #### 🎨 core:ui (KMP - Compose)
-- Material 3 theme (`DouroBatsTheme`)
+- Material 3 theme with custom Montserrat typography
 - Shared composable components
 - Design system (colors, typography, spacing)
+- Shared localized strings (navigation, login)
+- Public resources accessible across modules
 
 #### 🏠 features:* (KMP - Compose)
 - Feature-specific UI and ViewModels
 - Isolated feature logic
+- Feature-specific localized strings
 - Can be developed independently
 
 ## Development Rules
@@ -228,6 +234,50 @@ DouroBats/
 4. **Testing:** - Use the **AAA (Arrange-Act-Assert)** pattern.
     - **No Mocking Frameworks:** Use "Fake" implementation builders as defined in the examples.
     - **Naming Convention:** `fun <method> is <result> when <condition>` (using backticks).
+
+## Internationalization (i18n)
+
+The app supports **5 language variants** with automatic locale detection:
+
+| Language | Locale Code | Description |
+|----------|-------------|-------------|
+| 🇺🇸 English (US) | `en-US` | Default language |
+| 🇬🇧 English (UK) | `en-GB` | British English |
+| 🇧🇷 Portuguese (Brazil) | `pt-BR` | Brazilian Portuguese |
+| 🇵🇹 Portuguese (Portugal) | `pt-PT` | European Portuguese |
+| 🇪🇸 Spanish (Spain) | `es-ES` | Spanish |
+
+### Localization Architecture
+
+**Modular approach** - Each module owns its strings:
+- **core:ui**: Shared strings (navigation, login)
+- **features:home**: Home screen strings
+- **features:schedule**: Schedule screen strings
+- **features:settings**: Settings screen strings
+
+### Adding New Strings
+
+```kotlin
+// In feature module: features/home/src/commonMain/composeResources/values/strings.xml
+<string name="my_string">My text</string>
+
+// Usage in HomeScreen.kt
+import dourobats.features.home.generated.resources.Res
+import dourobats.features.home.generated.resources.my_string
+
+Text(text = stringResource(Res.string.my_string))
+```
+
+## Design & Branding
+
+### Material 3 Theme
+- **Primary Color:** #02677D (Blue)
+- **Custom Typography:** Montserrat font family (Regular, Medium, SemiBold, Bold)
+- **Light & Dark Schemes:** Full Material 3 color system with contrast variants
+
+### App Icons
+- **Android:** Adaptive icons (WebP format, all densities)
+- **iOS:** 1024×1024 AppIcon with light/dark/tinted variants
 
 ## MVP Feature Scopes
 1. **Auth Gate:** Splash screen determines if user reaches `LoginScreen` or `HomeScreen`.

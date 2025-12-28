@@ -69,24 +69,29 @@ graph TD
 - Future: Authentication interceptors
 
 ### 🎨 core:ui (KMP - Compose)
-- **Design System**: Material 3 theme, colors, typography
+- **Design System**: Material 3 theme with custom Montserrat typography
 - **Shared Components**: Buttons, Cards, Loading states
 - **Common Composables**: Reusable UI elements
+- **Shared Localized Strings**: Navigation labels, login screen text (5 languages)
+- **Public Resources**: Accessible across all modules via `publicResClass = true`
 
 ### 🏠 features:home (KMP - Compose)
 - Home screen UI
 - HomeViewModel
 - Home-specific composables
+- Feature-specific localized strings (5 languages)
 
 ### 📅 features:schedule (KMP - Compose)
 - Schedule/Calendar screen
 - ScheduleViewModel
 - Interactive calendar component
+- Feature-specific localized strings (5 languages)
 
 ### ⚙️ features:settings (KMP - Compose)
 - Settings screen
 - SettingsViewModel
 - Profile management
+- Feature-specific localized strings (5 languages)
 
 ---
 
@@ -136,3 +141,22 @@ mindmap
 - View user profile and details
 - Manage preferences
 - Logout functionality
+
+---
+
+## Internationalization
+
+The app supports **5 language variants** with modular string resource architecture:
+
+**Supported Languages:**
+- 🇺🇸 English (US) - `en-US` (default)
+- 🇬🇧 English (UK) - `en-GB`
+- 🇧🇷 Portuguese (Brazil) - `pt-BR`
+- 🇵🇹 Portuguese (Portugal) - `pt-PT`
+- 🇪🇸 Spanish (Spain) - `es-ES`
+
+**Architecture:**
+- **core:ui**: Shared strings (navigation, login)
+- **Each feature module**: Owns its feature-specific strings
+- Automatic language switching based on device locale
+- Compose Resources with `publicResClass` for shared access
