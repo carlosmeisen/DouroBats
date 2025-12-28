@@ -77,6 +77,6 @@ private fun LoginScreen(onLoginSuccess: () -> Unit) {
 
 private enum class Screen(val title: String, val emoji: String) {
     Home("Home", "\uD83C\uDFE0"),
-    Training("Training", "\uD83C\uDFC0"),
+    Training("Training", "\uD83C\uDFD0"),
     Settings("Settings", "⚙️")
 }
