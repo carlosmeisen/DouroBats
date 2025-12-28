@@ -1,19 +1,65 @@
+# Kotlin
 *.iml
 .kotlin
+*.kts.compiled
+
+# Gradle
 .gradle
 **/build/
-xcuserdata
 !src/**/build/
+gradle-app.setting
+!gradle-wrapper.jar
+.gradletasknamecache
+
+# Android
 local.properties
-.idea
-.DS_Store
-captures
+*.apk
+*.aab
+*.ap_
+*.dex
+captures/
 .externalNativeBuild
 .cxx
+
+# IntelliJ IDEA
+.idea
+*.iws
+out/
+
+# macOS
+.DS_Store
+**/.DS_Store
+
+# iOS
+xcuserdata
 *.xcodeproj/*
 !*.xcodeproj/project.pbxproj
 !*.xcodeproj/xcshareddata/
 !*.xcodeproj/project.xcworkspace/
 !*.xcworkspace/contents.xcworkspacedata
 **/xcshareddata/WorkspaceSettings.xcsettings
+*.swp
+*~.nib
+DerivedData/
+*.moved-aside
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+
+# Node (if using any JS tooling)
 node_modules/
+
+# Compose Resources (generated)
+**/generated/
+
+# Test results
+**/test-results/
+**/reports/
+
+# Configuration cache
+.gradle/configuration-cache
