@@ -1,9 +1,9 @@
 name: CI
 
+# Only run on pull requests to protected branches
+# Requires branch protection for both master and develop
 on:
   pull_request:
-    branches: [ master, develop ]
-  push:
     branches: [ master, develop ]
 
 jobs:
