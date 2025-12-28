@@ -7,6 +7,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import pt.dourobats.app.core.ui.theme.AppTheme
 import pt.dourobats.app.features.home.HomeScreen
 import pt.dourobats.app.features.schedule.ScheduleScreen
 import pt.dourobats.app.features.settings.SettingsScreen
@@ -14,7 +15,7 @@ import pt.dourobats.app.features.settings.SettingsScreen
 @Composable
 @Preview
 fun App() {
-    MaterialTheme {
+    AppTheme {
         // TODO: Implement proper authentication flow with splash screen
         // For now, we'll show the main app directly
         var isAuthenticated by remember { mutableStateOf(true) }
