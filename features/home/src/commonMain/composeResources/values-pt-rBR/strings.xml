@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Home Screen -->
+    <string name="home_welcome">Bem-vindo ao DouroBats!</string>
+    <string name="home_subtitle">Seu app de gestão de vôlei</string>
+</resources>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Training/Schedule Screen -->
+    <string name="training_title">Calendario de Entrenamientos</string>
+    <string name="training_coming_soon">Vista de calendario próximamente...</string>
+</resources>
