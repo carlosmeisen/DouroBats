@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App Name -->
+    <string name="app_name">DouroBats</string>
+
+    <!-- Navigation -->
+    <string name="nav_home">Inicio</string>
+    <string name="nav_training">Entrenamientos</string>
+    <string name="nav_settings">Ajustes</string>
+
+    <!-- Login Screen (used in App.kt) -->
+    <string name="login_title">Inicio de Sesión DouroBats</string>
+    <string name="login_button_temp">Iniciar Sesión (Temporal)</string>
+</resources>
