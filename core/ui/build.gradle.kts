@@ -4,6 +4,10 @@ plugins {
     id("pt.dourobats.app.compose")
 }
 
+compose.resources {
+    publicResClass = true
+}
+
 android {
     namespace = "pt.dourobats.app.core.ui"
 }
