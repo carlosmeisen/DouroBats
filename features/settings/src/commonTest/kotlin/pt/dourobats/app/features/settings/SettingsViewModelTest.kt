@@ -2,8 +2,6 @@ package pt.dourobats.app.features.settings
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -12,6 +10,7 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import pt.dourobats.app.core.domain.model.Language
 import pt.dourobats.app.core.domain.repository.SettingsRepository
+import pt.dourobats.app.core.test.fakes.fakeSettingsRepository
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -21,13 +20,15 @@ import kotlin.test.assertEquals
 class SettingsViewModelTest {
 
     private val testDispatcher = StandardTestDispatcher()
-    private lateinit var repository: FakeSettingsRepository
+    private lateinit var repository: SettingsRepository
     private lateinit var viewModel: SettingsViewModel
 
     @BeforeTest
     fun setup() {
         Dispatchers.setMain(testDispatcher)
-        repository = FakeSettingsRepository()
+        repository = fakeSettingsRepository {
+            initialLanguage = Language.ENGLISH_US
+        }
         viewModel = SettingsViewModel(repository)
     }
 
@@ -137,23 +138,5 @@ class SettingsViewModelTest {
         assertEquals(Language.PORTUGUESE_PT, viewModel.currentLanguage.value)
 
         collectorJob.cancel()
-    }
-}
-
-/**
- * Fake implementation of SettingsRepository for testing purposes.
- * Uses MutableStateFlow to simulate DataStore behavior.
- */
-class FakeSettingsRepository : SettingsRepository {
-    private val _languageFlow = MutableStateFlow(Language.ENGLISH_US)
-
-    override val languageFlow: Flow<Language> = _languageFlow
-
-    override suspend fun setLanguage(language: Language) {
-        _languageFlow.value = language
-    }
-
-    override suspend fun getLanguage(): Language {
-        return _languageFlow.value
     }
 }
