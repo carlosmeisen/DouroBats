@@ -3,6 +3,7 @@ package pt.dourobats.app.core.data.preferences
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import kotlinx.cinterop.ExperimentalForeignApi
+import okio.Path.Companion.toPath
 import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSFileManager
 import platform.Foundation.NSUserDomainMask
@@ -21,6 +22,6 @@ private fun getDataStorePath(): String {
 
 actual fun createDataStore(): DataStore<Preferences> {
     return androidx.datastore.preferences.core.PreferenceDataStoreFactory.createWithPath(
-        produceFile = { getDataStorePath() }
+        produceFile = { getDataStorePath().toPath() }
     )
 }
