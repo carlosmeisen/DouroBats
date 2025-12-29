@@ -38,56 +38,71 @@ class SettingsViewModelTest {
     }
 
     @Test
-    fun `currentLanguage initial value is ENGLISH_US`() = runTest(testDispatcher) {
-        // StateFlow has immediate value, no need to collect
-        assertEquals(Language.ENGLISH_US, viewModel.currentLanguage.value)
+    fun `currentLanguage is ENGLISH_US when initialized`() = runTest(testDispatcher) {
+        // Arrange (done in setup)
+        // Act
+        val language = viewModel.currentLanguage.value
+
+        // Assert
+        assertEquals(Language.ENGLISH_US, language)
     }
 
     @Test
-    fun `setLanguage updates repository`() = runTest(testDispatcher) {
-        viewModel.setLanguage(Language.PORTUGUESE_BR)
+    fun `repository is updated when setLanguage called`() = runTest(testDispatcher) {
+        // Arrange
+        val targetLanguage = Language.PORTUGUESE_BR
+
+        // Act
+        viewModel.setLanguage(targetLanguage)
         advanceUntilIdle()
 
+        // Assert
         val language = repository.getLanguage()
-        assertEquals(Language.PORTUGUESE_BR, language)
+        assertEquals(targetLanguage, language)
     }
 
     @Test
-    fun `setLanguage updates currentLanguage flow`() = runTest(testDispatcher) {
-        // Start collecting to activate the StateFlow
+    fun `currentLanguage is updated when setLanguage called`() = runTest(testDispatcher) {
+        // Arrange
         val collectorJob = launch {
             viewModel.currentLanguage.collect {}
         }
+        val targetLanguage = Language.SPANISH
 
-        viewModel.setLanguage(Language.SPANISH)
+        // Act
+        viewModel.setLanguage(targetLanguage)
         advanceUntilIdle()
 
-        // StateFlow updates when repository updates
-        assertEquals(Language.SPANISH, viewModel.currentLanguage.value)
+        // Assert
+        assertEquals(targetLanguage, viewModel.currentLanguage.value)
         collectorJob.cancel()
     }
 
     @Test
-    fun `currentLanguage reflects repository changes`() = runTest(testDispatcher) {
-        // Start collecting to activate the StateFlow
+    fun `currentLanguage is updated when repository changes`() = runTest(testDispatcher) {
+        // Arrange
         val collectorJob = launch {
             viewModel.currentLanguage.collect {}
         }
+        val targetLanguage = Language.ENGLISH_GB
 
-        repository.setLanguage(Language.ENGLISH_GB)
+        // Act
+        repository.setLanguage(targetLanguage)
         advanceUntilIdle()
 
-        assertEquals(Language.ENGLISH_GB, viewModel.currentLanguage.value)
+        // Assert
+        assertEquals(targetLanguage, viewModel.currentLanguage.value)
         collectorJob.cancel()
     }
 
     @Test
-    fun `multiple setLanguage calls update correctly`() = runTest(testDispatcher) {
-        // Start collecting to activate the StateFlow
+    fun `currentLanguage is correct when multiple setLanguage called`() = runTest(testDispatcher) {
+        // Arrange
         val collectorJob = launch {
             viewModel.currentLanguage.collect {}
         }
 
+        // Act & Assert
         viewModel.setLanguage(Language.PORTUGUESE_BR)
         advanceUntilIdle()
         assertEquals(Language.PORTUGUESE_BR, viewModel.currentLanguage.value)
@@ -104,12 +119,13 @@ class SettingsViewModelTest {
     }
 
     @Test
-    fun `all languages can be set through viewModel`() = runTest(testDispatcher) {
-        // Start collecting to activate the StateFlow
+    fun `setLanguage is successful when all languages tested`() = runTest(testDispatcher) {
+        // Arrange
         val collectorJob = launch {
             viewModel.currentLanguage.collect {}
         }
 
+        // Act & Assert
         Language.entries.forEach { language ->
             viewModel.setLanguage(language)
             advanceUntilIdle()
@@ -122,21 +138,23 @@ class SettingsViewModelTest {
     }
 
     @Test
-    fun `setLanguage with same language still updates`() = runTest(testDispatcher) {
-        // Start collecting to activate the StateFlow
+    fun `currentLanguage is updated when same language set twice`() = runTest(testDispatcher) {
+        // Arrange
         val collectorJob = launch {
             viewModel.currentLanguage.collect {}
         }
+        val targetLanguage = Language.PORTUGUESE_PT
 
-        viewModel.setLanguage(Language.PORTUGUESE_PT)
+        // Act
+        viewModel.setLanguage(targetLanguage)
         advanceUntilIdle()
-        assertEquals(Language.PORTUGUESE_PT, viewModel.currentLanguage.value)
+        assertEquals(targetLanguage, viewModel.currentLanguage.value)
 
-        // Set the same language again
-        viewModel.setLanguage(Language.PORTUGUESE_PT)
+        viewModel.setLanguage(targetLanguage)
         advanceUntilIdle()
-        assertEquals(Language.PORTUGUESE_PT, viewModel.currentLanguage.value)
 
+        // Assert
+        assertEquals(targetLanguage, viewModel.currentLanguage.value)
         collectorJob.cancel()
     }
 }

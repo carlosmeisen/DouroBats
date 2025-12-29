@@ -7,39 +7,56 @@ import kotlin.test.assertNotNull
 class LanguageTest {
 
     @Test
-    fun `all languages have valid codes`() {
-        Language.entries.forEach { language ->
+    fun `code is not empty when language is accessed`() {
+        // Arrange & Act
+        val languages = Language.entries
+
+        // Assert
+        languages.forEach { language ->
             assertNotNull(language.code, "Language ${language.name} should have a code")
             assert(language.code.isNotEmpty()) { "Language ${language.name} code should not be empty" }
         }
     }
 
     @Test
-    fun `all languages have valid BCP 47 tags`() {
-        Language.entries.forEach { language ->
+    fun `bcp47Tag is not empty when language is accessed`() {
+        // Arrange & Act
+        val languages = Language.entries
+
+        // Assert
+        languages.forEach { language ->
             assertNotNull(language.bcp47Tag, "Language ${language.name} should have a BCP 47 tag")
             assert(language.bcp47Tag.isNotEmpty()) { "Language ${language.name} BCP 47 tag should not be empty" }
         }
     }
 
     @Test
-    fun `all languages have valid resource qualifiers`() {
-        Language.entries.forEach { language ->
+    fun `resourceQualifier is not empty when language is accessed`() {
+        // Arrange & Act
+        val languages = Language.entries
+
+        // Assert
+        languages.forEach { language ->
             assertNotNull(language.resourceQualifier, "Language ${language.name} should have a resource qualifier")
             assert(language.resourceQualifier.isNotEmpty()) { "Language ${language.name} resource qualifier should not be empty" }
         }
     }
 
     @Test
-    fun `all languages have display names`() {
-        Language.entries.forEach { language ->
+    fun `displayName is not empty when language is accessed`() {
+        // Arrange & Act
+        val languages = Language.entries
+
+        // Assert
+        languages.forEach { language ->
             assertNotNull(language.displayName, "Language ${language.name} should have a display name")
             assert(language.displayName.isNotEmpty()) { "Language ${language.name} display name should not be empty" }
         }
     }
 
     @Test
-    fun `fromCode returns correct language for valid code`() {
+    fun `fromCode is correct language when valid code provided`() {
+        // Arrange & Act & Assert
         assertEquals(Language.ENGLISH_US, Language.fromCode("en"))
         assertEquals(Language.ENGLISH_GB, Language.fromCode("en-GB"))
         assertEquals(Language.PORTUGUESE_BR, Language.fromCode("pt-BR"))
@@ -48,21 +65,26 @@ class LanguageTest {
     }
 
     @Test
-    fun `fromCode returns ENGLISH_US for invalid code`() {
+    fun `fromCode is ENGLISH_US when invalid code provided`() {
+        // Arrange & Act & Assert
         assertEquals(Language.ENGLISH_US, Language.fromCode("invalid"))
         assertEquals(Language.ENGLISH_US, Language.fromCode(""))
         assertEquals(Language.ENGLISH_US, Language.fromCode("xyz"))
     }
 
     @Test
-    fun `fromCode is case sensitive`() {
+    fun `fromCode is ENGLISH_US when uppercase code provided`() {
+        // Arrange & Act & Assert
         assertEquals(Language.ENGLISH_US, Language.fromCode("EN"))
         assertEquals(Language.ENGLISH_US, Language.fromCode("En"))
     }
 
     @Test
-    fun `getSystemDefault returns a valid language`() {
+    fun `getSystemDefault is valid language when called`() {
+        // Arrange & Act
         val systemDefault = Language.getSystemDefault()
+
+        // Assert
         assertNotNull(systemDefault)
         assert(Language.entries.contains(systemDefault)) {
             "System default should be one of the supported languages"
@@ -70,69 +92,104 @@ class LanguageTest {
     }
 
     @Test
-    fun `ENGLISH_US has correct properties`() {
-        assertEquals("en", Language.ENGLISH_US.code)
-        assertEquals("en", Language.ENGLISH_US.resourceQualifier)
-        assertEquals("en-US", Language.ENGLISH_US.bcp47Tag)
-        assertEquals("English (US)", Language.ENGLISH_US.displayName)
+    fun `ENGLISH_US is correct properties when accessed`() {
+        // Arrange
+        val language = Language.ENGLISH_US
+
+        // Act & Assert
+        assertEquals("en", language.code)
+        assertEquals("en", language.resourceQualifier)
+        assertEquals("en-US", language.bcp47Tag)
+        assertEquals("English (US)", language.displayName)
     }
 
     @Test
-    fun `ENGLISH_GB has correct properties`() {
-        assertEquals("en-GB", Language.ENGLISH_GB.code)
-        assertEquals("en-rGB", Language.ENGLISH_GB.resourceQualifier)
-        assertEquals("en-GB", Language.ENGLISH_GB.bcp47Tag)
-        assertEquals("English (UK)", Language.ENGLISH_GB.displayName)
+    fun `ENGLISH_GB is correct properties when accessed`() {
+        // Arrange
+        val language = Language.ENGLISH_GB
+
+        // Act & Assert
+        assertEquals("en-GB", language.code)
+        assertEquals("en-rGB", language.resourceQualifier)
+        assertEquals("en-GB", language.bcp47Tag)
+        assertEquals("English (UK)", language.displayName)
     }
 
     @Test
-    fun `PORTUGUESE_BR has correct properties`() {
-        assertEquals("pt-BR", Language.PORTUGUESE_BR.code)
-        assertEquals("pt-rBR", Language.PORTUGUESE_BR.resourceQualifier)
-        assertEquals("pt-BR", Language.PORTUGUESE_BR.bcp47Tag)
-        assertEquals("Português (Brasil)", Language.PORTUGUESE_BR.displayName)
+    fun `PORTUGUESE_BR is correct properties when accessed`() {
+        // Arrange
+        val language = Language.PORTUGUESE_BR
+
+        // Act & Assert
+        assertEquals("pt-BR", language.code)
+        assertEquals("pt-rBR", language.resourceQualifier)
+        assertEquals("pt-BR", language.bcp47Tag)
+        assertEquals("Português (Brasil)", language.displayName)
     }
 
     @Test
-    fun `PORTUGUESE_PT has correct properties`() {
-        assertEquals("pt-PT", Language.PORTUGUESE_PT.code)
-        assertEquals("pt-rPT", Language.PORTUGUESE_PT.resourceQualifier)
-        assertEquals("pt-PT", Language.PORTUGUESE_PT.bcp47Tag)
-        assertEquals("Português (Portugal)", Language.PORTUGUESE_PT.displayName)
+    fun `PORTUGUESE_PT is correct properties when accessed`() {
+        // Arrange
+        val language = Language.PORTUGUESE_PT
+
+        // Act & Assert
+        assertEquals("pt-PT", language.code)
+        assertEquals("pt-rPT", language.resourceQualifier)
+        assertEquals("pt-PT", language.bcp47Tag)
+        assertEquals("Português (Portugal)", language.displayName)
     }
 
     @Test
-    fun `SPANISH has correct properties`() {
-        assertEquals("es", Language.SPANISH.code)
-        assertEquals("es-rES", Language.SPANISH.resourceQualifier)
-        assertEquals("es-ES", Language.SPANISH.bcp47Tag)
-        assertEquals("Español", Language.SPANISH.displayName)
+    fun `SPANISH is correct properties when accessed`() {
+        // Arrange
+        val language = Language.SPANISH
+
+        // Act & Assert
+        assertEquals("es", language.code)
+        assertEquals("es-rES", language.resourceQualifier)
+        assertEquals("es-ES", language.bcp47Tag)
+        assertEquals("Español", language.displayName)
     }
 
     @Test
-    fun `deprecated localeTag returns bcp47Tag`() {
+    fun `localeTag is bcp47Tag when deprecated property accessed`() {
+        // Arrange
+        val usLanguage = Language.ENGLISH_US
+        val brLanguage = Language.PORTUGUESE_BR
+
+        // Act & Assert
         @Suppress("DEPRECATION")
-        assertEquals(Language.ENGLISH_US.bcp47Tag, Language.ENGLISH_US.localeTag)
+        assertEquals(usLanguage.bcp47Tag, usLanguage.localeTag)
         @Suppress("DEPRECATION")
-        assertEquals(Language.PORTUGUESE_BR.bcp47Tag, Language.PORTUGUESE_BR.localeTag)
+        assertEquals(brLanguage.bcp47Tag, brLanguage.localeTag)
     }
 
     @Test
-    fun `all languages have unique codes`() {
+    fun `codes are unique when all languages compared`() {
+        // Arrange & Act
         val codes = Language.entries.map { it.code }
         val uniqueCodes = codes.distinct()
+
+        // Assert
         assertEquals(codes.size, uniqueCodes.size, "All language codes should be unique")
     }
 
     @Test
-    fun `all languages have unique BCP 47 tags`() {
+    fun `bcp47Tags are unique when all languages compared`() {
+        // Arrange & Act
         val tags = Language.entries.map { it.bcp47Tag }
         val uniqueTags = tags.distinct()
+
+        // Assert
         assertEquals(tags.size, uniqueTags.size, "All BCP 47 tags should be unique")
     }
 
     @Test
-    fun `total number of supported languages is 5`() {
-        assertEquals(5, Language.entries.size)
+    fun `entries is 5 languages when all languages counted`() {
+        // Arrange & Act
+        val count = Language.entries.size
+
+        // Assert
+        assertEquals(5, count)
     }
 }
