@@ -7,7 +7,8 @@ This diagram shows the database/persistence perspective of our domain model.
 ```mermaid
 erDiagram
     USER ||--o{ USER_ROLE : has
-    USER ||--o| ATHLETE_PROFILE : has
+    USER ||--o{ ATHLETE_PROFILE : has
+    SPORT ||--o{ ATHLETE_PROFILE : defines_levels_for
     ATHLETE_PROFILE ||--o{ ATHLETE_PROFILE_HISTORY : tracks
     SPORT ||--o{ TRAINING_SESSION : contains
     SPORT ||--o{ CALENDAR_ACCESS : controls
@@ -39,7 +40,8 @@ erDiagram
 
     ATHLETE_PROFILE {
         uuid id PK
-        uuid user_id FK "unique"
+        uuid user_id FK
+        uuid sport_id FK
         string level "BEGINNER|INTERMEDIATE|ADVANCED"
         timestamp created_at
         timestamp updated_at
@@ -177,7 +179,8 @@ erDiagram
 | Column | Type | Constraints | Description |
 |--------|------|-------------|-------------|
 | id | UUID | PRIMARY KEY | Unique profile identifier |
-| user_id | UUID | FOREIGN KEY (USER), UNIQUE, NOT NULL | Reference to user (one-to-one) |
+| user_id | UUID | FOREIGN KEY (USER), NOT NULL | Reference to user |
+| sport_id | UUID | FOREIGN KEY (SPORT), NOT NULL | Reference to sport |
 | level | VARCHAR(20) | NOT NULL | Athlete skill level (BEGINNER, INTERMEDIATE, ADVANCED) |
 | created_at | TIMESTAMP | NOT NULL | Profile creation timestamp |
 | updated_at | TIMESTAMP | NOT NULL | Last update timestamp |
@@ -185,13 +188,15 @@ erDiagram
 **Indexes:**
 - Primary: `id`
 - Foreign Key: `user_id` → `USER(id)`
-- Unique: `user_id` (one profile per user)
+- Foreign Key: `sport_id` → `SPORT(id)`
+- Unique Composite: `(user_id, sport_id)` (one profile per user per sport)
 - Index: `level` (for filtering by level)
+- Index: `sport_id` (for sport-specific queries)
 
 **Constraints:**
 - User must have ATHLETE role to have AthleteProfile
 - Level is informational only - doesn't restrict session attendance
-- One profile per user
+- One profile per user per sport (e.g., João: ADVANCED in Volleyball, BEGINNER in Padel)
 
 ---
 
@@ -410,11 +415,16 @@ ADD CONSTRAINT fk_user_role_assigned_by
 FOREIGN KEY (assigned_by) REFERENCES USER(id)
 ON DELETE SET NULL;
 
--- ATHLETE_PROFILE references USER
+-- ATHLETE_PROFILE references USER and SPORT
 ALTER TABLE ATHLETE_PROFILE
 ADD CONSTRAINT fk_athlete_profile_user
 FOREIGN KEY (user_id) REFERENCES USER(id)
 ON DELETE CASCADE;
+
+ALTER TABLE ATHLETE_PROFILE
+ADD CONSTRAINT fk_athlete_profile_sport
+FOREIGN KEY (sport_id) REFERENCES SPORT(id)
+ON DELETE RESTRICT;
 
 -- ATHLETE_PROFILE_HISTORY references ATHLETE_PROFILE
 ALTER TABLE ATHLETE_PROFILE_HISTORY
@@ -493,9 +503,9 @@ ADD CONSTRAINT uk_user_email UNIQUE (email);
 ALTER TABLE USER_ROLE
 ADD CONSTRAINT uk_user_role_type UNIQUE (user_id, role);
 
--- User can have only one athlete profile
+-- User can have only one athlete profile per sport
 ALTER TABLE ATHLETE_PROFILE
-ADD CONSTRAINT uk_athlete_profile_user UNIQUE (user_id);
+ADD CONSTRAINT uk_athlete_profile_user_sport UNIQUE (user_id, sport_id);
 
 -- Sport name must be unique
 ALTER TABLE SPORT

@@ -35,6 +35,7 @@ classDiagram
     class AthleteProfile {
         +UUID id
         +UUID userId
+        +UUID sportId
         +AthleteLevel level
         +DateTime createdAt
         +DateTime updatedAt
@@ -191,7 +192,8 @@ classDiagram
 
     %% Relationships
     User "1" --> "1..*" UserRole : has
-    User "1" --> "0..1" AthleteProfile : has
+    User "1" --> "0..*" AthleteProfile : has
+    Sport "1" --> "0..*" AthleteProfile : defines levels for
     AthleteProfile "1" --> "0..*" AthleteProfileHistory : tracks
     Sport "1" --> "0..*" TrainingSession : contains
     Sport "1" --> "0..*" CalendarAccess : controls
@@ -199,20 +201,19 @@ classDiagram
     Venue "1" --> "0..*" TrainingSession : hosts
     SessionTemplate "1" ..> "0..*" TrainingSession : generates
     TrainingSession "1" --> "0..*" Attendance : has
-    User "1" --> "0..*" Attendance : participates
+    User "1" --> "0..*" Attendance : creates
 
     User --> UserStatus : status
     UserRole --> Role : role
     UserRole --> CommitteePrivilege : privileges
     AthleteProfile --> AthleteLevel : level
+    AthleteProfile --> Sport : for sport
     AthleteProfileHistory --> AthleteLevel : oldLevel/newLevel
     TrainingSession --> SessionStatus : status
     TrainingSession --> SessionLevel : targetLevel
     TrainingSession --> Sport : belongs to
     TrainingSession --> Venue : located at
     Attendance --> AttendanceStatus : status
-    Attendance --> User : athlete
-    Attendance --> TrainingSession : session
 ```
 
 ## Entity Details
@@ -251,7 +252,7 @@ classDiagram
 ---
 
 ### AthleteProfile
-**Entity** storing athlete-specific information like skill level.
+**Entity** storing athlete-specific information like skill level per sport.
 
 **Key Methods:**
 - `getHistory()`: Get all level change history records
@@ -259,11 +260,12 @@ classDiagram
 **Invariants:**
 - User must have ATHLETE role to have AthleteProfile
 - Level is informational - doesn't restrict session attendance
-- One profile per user
+- One profile per user per sport (unique: userId + sportId)
 
 **Business Rules:**
 - Only Committee with MANAGE_ATHLETES privilege can modify level
 - Level changes automatically create history records
+- Athletes can have different levels in different sports (e.g., ADVANCED in Volleyball, BEGINNER in Padel)
 
 ---
 
@@ -460,20 +462,20 @@ classDiagram
 | Relationship | Cardinality | Description |
 |--------------|-------------|-------------|
 | User → UserRole | 1 to many | A user must have at least one role, can have multiple |
-| User → AthleteProfile | 1 to 0..1 | A user with ATHLETE role has one AthleteProfile |
+| User → AthleteProfile | 1 to many | A user with ATHLETE role can have profiles for multiple sports |
+| Sport → AthleteProfile | 1 to many | A sport can have many athlete profiles at different levels |
 | AthleteProfile → AthleteProfileHistory | 1 to many | Profile can have many level change records |
 | Sport → TrainingSession | 1 to many | A sport can have zero or more training sessions |
 | Sport → CalendarAccess | 1 to many | Each sport has independent calendar access records |
 | Sport → SessionTemplate | 1 to many | Sport can have many recurring templates |
-| Sport → Venue | many to many | Many sports can use many venues (via sportTags) |
 | Venue → TrainingSession | 1 to many | Venue can host many sessions |
 | SessionTemplate → TrainingSession | 1 to many | Template can generate many sessions (conceptually) |
 | TrainingSession → Attendance | 1 to many | A session can have zero or more attendance records |
 | User → Attendance | 1 to many | A user can attend zero or more sessions |
 | TrainingSession → Sport | many to 1 | Each session belongs to exactly one sport |
 | TrainingSession → Venue | many to 1 | Each session is at exactly one venue |
-| Attendance → User | many to 1 | Each attendance is for exactly one user |
-| Attendance → TrainingSession | many to 1 | Each attendance is for exactly one session |
+| AthleteProfile → User | many to 1 | Each profile belongs to exactly one user |
+| AthleteProfile → Sport | many to 1 | Each profile is for exactly one sport |
 
 ---
 

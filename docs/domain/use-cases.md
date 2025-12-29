@@ -714,51 +714,59 @@ graph TB
 
 **Actor:** Committee Member with MANAGE_ATHLETES privilege
 
-**Goal:** Update athlete's skill level with audit trail
+**Goal:** Update athlete's skill level for a specific sport with audit trail
 
 **Preconditions:**
 - User has Committee role with MANAGE_ATHLETES privilege
-- Target user has ATHLETE role and AthleteProfile
+- Target user has ATHLETE role and AthleteProfile for the sport
 
 **Main Flow:**
 1. Committee member views athlete list
 2. Committee member selects athlete
-3. System displays current level and history
-4. Committee member selects new level:
+3. Committee member selects sport
+4. System displays current level and history for that sport
+5. Committee member selects new level:
    - BEGINNER
    - INTERMEDIATE
    - ADVANCED
-5. Committee member enters optional reason for change
-6. System validates:
+6. Committee member enters optional reason for change
+7. System validates:
    - User has MANAGE_ATHLETES privilege
+   - AthleteProfile exists for user + sport combination
    - New level is different from current
-7. System updates AthleteProfile.level
-8. System creates AthleteProfileHistory record:
+8. System updates AthleteProfile.level for that sport
+9. System creates AthleteProfileHistory record:
    - old_level = current level
    - new_level = selected level
    - changed_by = Committee member
    - changed_at = timestamp
    - reason = optional explanation
-9. System displays success message
+10. System displays success message
 
 **Postconditions:**
-- AthleteProfile updated with new level
+- AthleteProfile updated with new level for specific sport
 - AthleteProfileHistory record created (immutable audit trail)
-- Level change tracked
+- Level change tracked per sport
 
 **Alternative Flows:**
 - **A1: Same Level**
-  - If new level equals current level
+  - If new level equals current level for that sport
   - System shows info: "Level unchanged"
-- **A2: No Athlete Profile**
-  - If user doesn't have ATHLETE role
-  - System shows error: "User is not an athlete"
+- **A2: No Athlete Profile for Sport**
+  - If user doesn't have AthleteProfile for selected sport
+  - System shows error: "User is not registered as athlete for this sport"
+  - System offers to create new AthleteProfile
+- **A3: Create Profile for New Sport**
+  - Committee member creates AthleteProfile for user + sport
+  - Sets initial level
+  - History record created with null old_level
 
 **Business Rules:**
 - Only Committee with MANAGE_ATHLETES privilege can modify
 - Level is informational - doesn't restrict session attendance
 - History is immutable (cannot be deleted)
 - First history record has null old_level
+- Athletes can have different levels in different sports (e.g., ADVANCED in Volleyball, BEGINNER in Padel)
 - MVP: Data captured, UI viewing is future feature
 
 ---
