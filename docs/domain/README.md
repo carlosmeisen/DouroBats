@@ -85,30 +85,35 @@ Defines what a user can do in the system through role assignment with granular C
 
 ### 3. AthleteProfile
 
-Stores athlete-specific information including skill level for informational purposes.
+Stores athlete-specific information including skill level per sport for informational purposes.
 
 **Attributes:**
 - `id`: UUID
 - `userId`: UUID - Reference to User (must have ATHLETE role)
+- `sportId`: UUID - Reference to Sport
 - `level`: AthleteLevel - BEGINNER | INTERMEDIATE | ADVANCED
 - `createdAt`: Timestamp
 - `updatedAt`: Timestamp
 
 **Responsibilities:**
-- Track athlete skill progression
+- Track athlete skill progression per sport
 - Provide context for session recommendations
 - Enable level-based analytics
+- Support multi-sport athletes with different skill levels
 
 **Business Rules:**
-1. User must have ATHLETE role to have an AthleteProfile
+1. User must have ATHLETE role to have AthleteProfile
 2. Level is informational only - doesn't restrict session attendance
 3. Only Committee members with MANAGE_ATHLETES privilege can modify levels
 4. Level changes are tracked in AthleteProfileHistory
+5. One profile per user per sport (unique: userId + sportId)
+6. Athletes can have different levels in different sports
 
 **Use Cases:**
-- Help athletes find appropriate sessions (e.g., Intermediate athlete sees "Tuesday Advanced" session)
+- Help athletes find appropriate sessions (e.g., Intermediate volleyball athlete sees "Tuesday Advanced" session)
 - Allow cross-level attendance (Advanced athlete can help in Beginner session)
-- Track athlete progression over time
+- Track athlete progression over time per sport
+- Support multi-sport athletes (e.g., João: ADVANCED in Volleyball, BEGINNER in Padel)
 
 ---
 
@@ -381,8 +386,11 @@ The bridge entity managing the many-to-many relationship between Users (Athletes
 User (1) ---- (1..N) UserRole
    User must have at least one role
 
-User (1) ---- (0..1) AthleteProfile
-   User with ATHLETE role has one AthleteProfile
+User (1) ---- (0..N) AthleteProfile
+   User with ATHLETE role can have profiles for multiple sports
+
+Sport (1) ---- (0..N) AthleteProfile
+   Sport can have many athlete profiles at different levels
 
 AthleteProfile (1) ---- (0..N) AthleteProfileHistory
    Profile can have many level change records
@@ -727,20 +735,21 @@ fun assignRole(userId: UUID, newRole: Role) {
 1. **User Role Requirement**: Every User must have at least one UserRole
 2. **Role Mutual Exclusivity**: User cannot have both ATHLETE and SUPPORTER roles
 3. **Athlete Profile Constraint**: Only users with ATHLETE role can have AthleteProfile
-4. **Committee Admin Existence**: System must always have at least one COMMITTEE_ADMIN
-5. **Athlete Attendance Only**: Only users with ATHLETE role can have Attendance records
-6. **Valid Session Status**: TrainingSession status must be SCHEDULED, CANCELLED, or COMPLETED
-7. **Capacity Constraint**: Confirmed attendance count ≤ session capacity
-8. **Unique Email**: Each User email must be unique in the system
-9. **Future Sessions Only**: Cannot create sessions in the past
-10. **Valid Attendance Status**: Attendance status must be PENDING, CONFIRMED, or CANCELLED
-11. **Calendar Sequential**: CalendarAccess periods must be sequential with no gaps
-12. **Calendar Limit**: Cannot unlock calendar beyond 3 months ahead
-13. **Venue Sport Tags**: TrainingSession venue must have session's sport in sportTags
-14. **Unique Venue Names**: Each Venue name must be unique
-15. **Unique Role Assignment**: User cannot have duplicate roles
-16. **Session Within Unlock**: TrainingSession date must be within CalendarAccess period
-17. **Level Change Audit**: Every AthleteProfile level change must create AthleteProfileHistory record
+4. **Sport-Specific Profile**: One AthleteProfile per user per sport (unique: userId + sportId)
+5. **Committee Admin Existence**: System must always have at least one COMMITTEE_ADMIN
+6. **Athlete Attendance Only**: Only users with ATHLETE role can have Attendance records
+7. **Valid Session Status**: TrainingSession status must be SCHEDULED, CANCELLED, or COMPLETED
+8. **Capacity Constraint**: Confirmed attendance count ≤ session capacity
+9. **Unique Email**: Each User email must be unique in the system
+10. **Future Sessions Only**: Cannot create sessions in the past
+11. **Valid Attendance Status**: Attendance status must be PENDING, CONFIRMED, or CANCELLED
+12. **Calendar Sequential**: CalendarAccess periods must be sequential with no gaps
+13. **Calendar Limit**: Cannot unlock calendar beyond 3 months ahead
+14. **Venue Sport Tags**: TrainingSession venue must have session's sport in sportTags
+15. **Unique Venue Names**: Each Venue name must be unique
+16. **Unique Role Assignment**: User cannot have duplicate roles
+17. **Session Within Unlock**: TrainingSession date must be within CalendarAccess period
+18. **Level Change Audit**: Every AthleteProfile level change must create AthleteProfileHistory record
 
 ---
 
@@ -813,8 +822,10 @@ interface UserRoleRepository {
 }
 
 interface AthleteProfileRepository {
-    suspend fun findByUserId(userId: UUID): AthleteProfile?
-    suspend fun findByLevel(level: AthleteLevel): List<AthleteProfile>
+    suspend fun findByUserId(userId: UUID): List<AthleteProfile>
+    suspend fun findByUserIdAndSportId(userId: UUID, sportId: UUID): AthleteProfile?
+    suspend fun findBySportId(sportId: UUID): List<AthleteProfile>
+    suspend fun findByLevel(sportId: UUID, level: AthleteLevel): List<AthleteProfile>
     suspend fun save(profile: AthleteProfile): AthleteProfile
 }
 
