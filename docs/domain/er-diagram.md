@@ -39,7 +39,7 @@ erDiagram
 
     ATHLETE_PROFILE {
         uuid id PK
-        uuid user_id FK UK "unique"
+        uuid user_id FK "unique"
         string level "BEGINNER|INTERMEDIATE|ADVANCED"
         timestamp created_at
         timestamp updated_at
