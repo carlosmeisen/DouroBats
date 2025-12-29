@@ -13,9 +13,6 @@ kotlin {
             implementation(libs.androidx.datastore.preferences)
             implementation(libs.koin.core)
         }
-        androidMain.dependencies {
-            implementation("androidx.datastore:datastore-preferences:1.1.1")
-        }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
             implementation(libs.kotlinx.coroutines.test)
