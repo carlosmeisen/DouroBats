@@ -197,7 +197,7 @@ classDiagram
     Sport "1" --> "0..*" CalendarAccess : controls
     Sport "1" --> "0..*" SessionTemplate : defines
     Venue "1" --> "0..*" TrainingSession : hosts
-    SessionTemplate "1" -.-> "0..*" TrainingSession : generates
+    SessionTemplate "1" ..> "0..*" TrainingSession : generates
     TrainingSession "1" --> "0..*" Attendance : has
     User "1" --> "0..*" Attendance : participates
 
