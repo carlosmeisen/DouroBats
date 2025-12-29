@@ -6,16 +6,24 @@ This document visualizes the interactions between actors and the system.
 
 ```mermaid
 graph LR
-    Athlete[👤 Athlete]
-    Supporter[👤 Supporter]
-    Committee[👨‍💼 Committee]
+    User[👤 User]
 
-    Athlete -->|extends| User
-    Supporter -->|extends| User
-    Committee -->|extends| User
+    User -->|has role| Athlete[ATHLETE]
+    User -->|has role| Supporter[SUPPORTER]
+    User -->|has role| Committee[COMMITTEE]
 
-    User[Base User]
+    Committee -->|has privileges| Privileges[Committee Privileges]
+
+    style User fill:#e1f5ff
+    style Athlete fill:#d4edda
+    style Supporter fill:#fff3cd
+    style Committee fill:#f8d7da
 ```
+
+**Note:** Users can have multiple roles simultaneously:
+- ✅ ATHLETE + COMMITTEE
+- ✅ SUPPORTER + COMMITTEE
+- ❌ ATHLETE + SUPPORTER (mutually exclusive)
 
 ## Complete Use Case Diagram
 
