@@ -207,12 +207,9 @@ classDiagram
     UserRole --> Role : role
     UserRole --> CommitteePrivilege : privileges
     AthleteProfile --> AthleteLevel : level
-    AthleteProfile --> Sport : for sport
     AthleteProfileHistory --> AthleteLevel : oldLevel/newLevel
     TrainingSession --> SessionStatus : status
     TrainingSession --> SessionLevel : targetLevel
-    TrainingSession --> Sport : belongs to
-    TrainingSession --> Venue : located at
     Attendance --> AttendanceStatus : status
 ```
 
