@@ -6,7 +6,7 @@ This document defines the core domain entities, relationships, and business rule
 
 ## Domain Context
 
-**DouroBats** is a multi-sport association managing training sessions for various sports (Volleyball, Futsal, Padel, etc.). The system enables:
+**DouroBats** is a multi-sport association managing training sessions for various sports (Volleyball, Futsal, Padel, Basketball, Running, etc.). The system enables:
 - Athletes to view and confirm attendance for training sessions
 - Committee members to manage schedules with proper access control
 - Supporters to view information (read-only)
@@ -223,7 +223,7 @@ Represents a specific sport or activity category.
 
 **Attributes:**
 - `id`: UUID
-- `name`: Sport name (e.g., "Volleyball", "Futsal", "Padel")
+- `name`: Sport name (e.g., "Volleyball", "Futsal", "Padel", "Running")
 - `description`: Brief description of the sport
 - `isActive`: Boolean - Whether the sport is currently active
 
@@ -237,6 +237,7 @@ Represents a specific sport or activity category.
 - Futsal
 - Padel
 - Basketball
+- Running
 
 **Business Rules:**
 - Sport name must be unique (**✅ Backend Enforces**, ❌ Client skips - race conditions possible)
