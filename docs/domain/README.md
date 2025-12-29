@@ -6,7 +6,7 @@ This document defines the core domain entities, relationships, and business rule
 
 ## Domain Context
 
-**DouroBats** is a multi-sport association managing training sessions for various sports (Volleyball, Futsal, Padel, etc.). The system enables:
+**DouroBats** is a multi-sport association managing training sessions for various sports (Volleyball, Futsal, Padel, Basketball, Running, etc.). The system enables:
 - Athletes to view and confirm attendance for training sessions
 - Committee members to manage schedules with proper access control
 - Supporters to view information (read-only)
@@ -16,6 +16,77 @@ This document defines the core domain entities, relationships, and business rule
 - **Athletes**: View schedule, confirm attendance, have skill levels (Beginner/Intermediate/Advanced)
 - **Supporters**: View-only access to schedules and information
 - **Committee Members**: Manage sessions, venues, calendar access, and athletes (with granular privileges)
+
+---
+
+## Implementation Boundaries
+
+This domain documentation represents **shared knowledge** between mobile and backend teams. The domain model, entities, and business rules apply to both, but implementation responsibilities differ:
+
+### Backend Responsibilities (Separate Repository)
+
+The backend is the **source of truth** and enforces all business rules:
+
+- ✅ **Data Persistence**: Manage database transactions and data integrity
+- ✅ **Business Rule Enforcement**: Validate all constraints and invariants
+- ✅ **Authorization**: Verify user roles and Committee privileges
+- ✅ **Use Case Execution**: Execute all business logic (confirm attendance, unlock calendar, etc.)
+- ✅ **API Endpoints**: Expose REST/GraphQL endpoints for mobile consumption
+- ✅ **Audit Trails**: Record all changes (assignedBy, changedBy, unlockedBy)
+- ✅ **Capacity Management**: Enforce session capacity limits
+- ✅ **Calendar Access Control**: Validate sequential unlocking and 3-month limit
+
+### Mobile Responsibilities (This Repository)
+
+The mobile app **displays and collects** data, with limited local validation:
+
+- ✅ **UI/UX**: Display domain data to users in intuitive interfaces
+- ✅ **User Input**: Collect and send data to backend via API
+- ✅ **Client-Side Validation**: Fast feedback for UX (duplicates backend validation)
+- ✅ **Role-Based UI**: Show/hide features based on user roles and privileges
+- ✅ **Navigation**: Guide users through appropriate flows
+- ✅ **Local Data**: Use repository pattern with local storage during development
+- ✅ **API Integration**: Swap to backend API when ready (same repository interface)
+
+### Development Approach
+
+**Phase 1 - Local Development (Current):**
+```kotlin
+// Use local storage implementation
+class LocalTrainingSessionRepository : TrainingSessionRepository {
+    // SQLite / SharedPreferences / in-memory
+}
+```
+
+**Phase 2 - Backend Integration (When Ready):**
+```kotlin
+// Swap to API implementation (same interface!)
+class RemoteTrainingSessionRepository(
+    private val apiClient: ApiClient
+) : TrainingSessionRepository {
+    // REST API calls
+}
+```
+
+**Key Principle:** Mobile displays and validates for UX, but **backend is always the source of truth**.
+
+### Validation Indicators Legend
+
+Throughout this document, business rules include validation indicators showing which layer enforces each rule:
+
+| Indicator | Meaning | Example |
+|-----------|---------|---------|
+| **✅ Backend Enforces** | Backend validates and enforces (source of truth) | Capacity limits, unique constraints |
+| **⚠️ Client Validates (UX)** | Mobile checks for fast feedback (backend also enforces) | Session capacity, role checks |
+| **⚠️ Client Hides UI** | Mobile hides features based on roles (backend authorizes) | Committee-only buttons |
+| **⚠️ Client Filters** | Mobile filters options (backend validates selection) | Venue dropdowns by sport |
+| **❌ Client Skips** | Mobile doesn't check (only backend can validate) | Unique email, race conditions |
+| **(Display only)** | Informational field, no enforcement needed | Athlete level, venue capacity |
+
+**Example Business Rule:**
+- "Cannot exceed capacity" (**✅ Backend Enforces**, ⚠️ Client validates for UX)
+  - Backend: Rejects API call if session is full (source of truth)
+  - Mobile: Shows "Session Full" message before user attempts to confirm (fast UX feedback)
 
 ---
 
@@ -68,11 +139,11 @@ Defines what a user can do in the system through role assignment with granular C
 - Only ADMIN can assign/revoke privileges to other Committee members
 
 **Business Rules:**
-1. User must have at least one role
-2. ATHLETE and SUPPORTER are mutually exclusive
-3. COMMITTEE can be combined with ATHLETE or SUPPORTER
-4. Only COMMITTEE_ADMIN can assign privileges
-5. System must have at least one COMMITTEE_ADMIN
+1. User must have at least one role (**✅ Backend Enforces**)
+2. ATHLETE and SUPPORTER are mutually exclusive (**✅ Backend Enforces**, ⚠️ Client validates for UX)
+3. COMMITTEE can be combined with ATHLETE or SUPPORTER (**✅ Backend Enforces**, ⚠️ Client validates for UX)
+4. Only COMMITTEE_ADMIN can assign privileges (**✅ Backend Enforces**, ⚠️ Client hides UI)
+5. System must have at least one COMMITTEE_ADMIN (**✅ Backend Enforces**)
 
 **Valid Role Combinations:**
 - ✅ Athlete only
@@ -102,12 +173,12 @@ Stores athlete-specific information including skill level per sport for informat
 - Support multi-sport athletes with different skill levels
 
 **Business Rules:**
-1. User must have ATHLETE role to have AthleteProfile
-2. Level is informational only - doesn't restrict session attendance
-3. Only Committee members with MANAGE_ATHLETES privilege can modify levels
-4. Level changes are tracked in AthleteProfileHistory
-5. One profile per user per sport (unique: userId + sportId)
-6. Athletes can have different levels in different sports
+1. User must have ATHLETE role to have AthleteProfile (**✅ Backend Enforces**, ⚠️ Client validates for UX)
+2. Level is informational only - doesn't restrict session attendance (Display only)
+3. Only Committee members with MANAGE_ATHLETES privilege can modify levels (**✅ Backend Enforces**, ⚠️ Client hides UI)
+4. Level changes are tracked in AthleteProfileHistory (**✅ Backend Enforces**)
+5. One profile per user per sport (unique: userId + sportId) (**✅ Backend Enforces**, ❌ Client skips - race conditions possible)
+6. Athletes can have different levels in different sports (**✅ Backend Enforces**)
 
 **Use Cases:**
 - Help athletes find appropriate sessions (e.g., Intermediate volleyball athlete sees "Tuesday Advanced" session)
@@ -136,9 +207,9 @@ Audit trail tracking changes to athlete skill levels over time.
 - Enable future analytics on athlete progression
 
 **Business Rules:**
-1. Automatically created whenever AthleteProfile.level is updated
-2. Cannot be deleted (immutable audit trail)
-3. Only Committee members with MANAGE_ATHLETES privilege can trigger changes
+1. Automatically created whenever AthleteProfile.level is updated (**✅ Backend Enforces**)
+2. Cannot be deleted (immutable audit trail) (**✅ Backend Enforces**)
+3. Only Committee members with MANAGE_ATHLETES privilege can trigger changes (**✅ Backend Enforces**, ⚠️ Client hides UI)
 
 **MVP Scope:**
 - Data model implemented and capturing history
@@ -152,7 +223,7 @@ Represents a specific sport or activity category.
 
 **Attributes:**
 - `id`: UUID
-- `name`: Sport name (e.g., "Volleyball", "Futsal", "Padel")
+- `name`: Sport name (e.g., "Volleyball", "Futsal", "Padel", "Running")
 - `description`: Brief description of the sport
 - `isActive`: Boolean - Whether the sport is currently active
 
@@ -166,10 +237,11 @@ Represents a specific sport or activity category.
 - Futsal
 - Padel
 - Basketball
+- Running
 
 **Business Rules:**
-- Sport name must be unique
-- Inactive sports don't show in athlete views but remain in system for historical data
+- Sport name must be unique (**✅ Backend Enforces**, ❌ Client skips - race conditions possible)
+- Inactive sports don't show in athlete views but remain in system for historical data (**✅ Backend Enforces**, ⚠️ Client filters lists)
 
 ---
 
@@ -193,10 +265,10 @@ Pre-defined training locations with sport-based filtering for data consistency.
 - Store venue-specific information
 
 **Business Rules:**
-1. Only Committee members with MANAGE_VENUES privilege can create/edit venues
-2. Venue capacity is informational only - session capacity is enforced instead
-3. Sport tags enable filtering (e.g., only show Volleyball-tagged venues when creating Volleyball session)
-4. Venue name must be unique
+1. Only Committee members with MANAGE_VENUES privilege can create/edit venues (**✅ Backend Enforces**, ⚠️ Client hides UI)
+2. Venue capacity is informational only - session capacity is enforced instead (Display only)
+3. Sport tags enable filtering (e.g., only show Volleyball-tagged venues when creating Volleyball session) (**✅ Backend Enforces**, ⚠️ Client filters dropdowns)
+4. Venue name must be unique (**✅ Backend Enforces**, ❌ Client skips - race conditions possible)
 
 **Use Cases:**
 - Committee creating Volleyball session sees dropdown of Volleyball-tagged venues
@@ -224,12 +296,12 @@ Controls when training sessions can be scheduled, with per-sport locking and aud
 - Provide audit trail for calendar access
 
 **Business Rules:**
-1. Calendar is locked by default - no sessions can be created
-2. Only Committee members with MANAGE_CALENDAR privilege can unlock periods
-3. Unlocking must be sequential (no gaps allowed)
-4. Maximum unlock period: 3 months ahead of current date
-5. Each sport has independent calendar access control
-6. Cannot delete calendar access records (immutable audit trail)
+1. Calendar is locked by default - no sessions can be created (**✅ Backend Enforces**)
+2. Only Committee members with MANAGE_CALENDAR privilege can unlock periods (**✅ Backend Enforces**, ⚠️ Client hides UI)
+3. Unlocking must be sequential (no gaps allowed) (**✅ Backend Enforces**, ⚠️ Client can pre-check)
+4. Maximum unlock period: 3 months ahead of current date (**✅ Backend Enforces**, ⚠️ Client can pre-check)
+5. Each sport has independent calendar access control (**✅ Backend Enforces**)
+6. Cannot delete calendar access records (immutable audit trail) (**✅ Backend Enforces**)
 
 **Example:**
 ```
@@ -272,10 +344,10 @@ Defines recurring weekly training session patterns for quick calendar generation
 - Maintain consistency for weekly schedules
 
 **Business Rules:**
-1. Only Committee members with MANAGE_SESSIONS privilege can create/edit templates
-2. Templates generate individual TrainingSession records (not live-linked)
-3. Generated sessions can still be individually edited or cancelled
-4. Multiple templates can exist for same day/sport (e.g., Tuesday has 2 Volleyball slots)
+1. Only Committee members with MANAGE_SESSIONS privilege can create/edit templates (**✅ Backend Enforces**, ⚠️ Client hides UI)
+2. Templates generate individual TrainingSession records (not live-linked) (**✅ Backend Enforces**)
+3. Generated sessions can still be individually edited or cancelled (**✅ Backend Enforces**)
+4. Multiple templates can exist for same day/sport (e.g., Tuesday has 2 Volleyball slots) (**✅ Backend Enforces**)
 
 **MVP Importance:** This is CRITICAL for MVP - enables Committee to quickly populate weekly schedules.
 
@@ -318,13 +390,13 @@ A specific scheduled training event for a sport with venue and target level.
 - Target level guidance for athletes
 
 **Business Rules:**
-1. Only Committee members with MANAGE_SESSIONS privilege can create/update/delete sessions
-2. Can only create sessions within unlocked calendar periods (CalendarAccess)
-3. Cannot confirm attendance for cancelled sessions
-4. Cannot exceed capacity (enforced by Attendance logic)
-5. Target level is informational - athletes of any level can attend
-6. Cannot create sessions in the past
-7. Venue must support the session's sport (via sport tags)
+1. Only Committee members with MANAGE_SESSIONS privilege can create/update/delete sessions (**✅ Backend Enforces**, ⚠️ Client hides UI)
+2. Can only create sessions within unlocked calendar periods (CalendarAccess) (**✅ Backend Enforces**, ⚠️ Client validates for UX)
+3. Cannot confirm attendance for cancelled sessions (**✅ Backend Enforces**, ⚠️ Client validates for UX)
+4. Cannot exceed capacity (enforced by Attendance logic) (**✅ Backend Enforces**, ⚠️ Client validates for UX)
+5. Target level is informational - athletes of any level can attend (Client-side only)
+6. Cannot create sessions in the past (**✅ Backend Enforces**, ⚠️ Client validates for UX)
+7. Venue must support the session's sport (via sport tags) (**✅ Backend Enforces**, ⚠️ Client filters dropdowns)
 
 **Example:**
 ```
@@ -359,13 +431,13 @@ The bridge entity managing the many-to-many relationship between Users (Athletes
 - Capacity enforcement
 
 **Business Rules:**
-1. Only users with ATHLETE role can confirm attendance
-2. Cannot confirm if session is at capacity (unless replacing a cancelled attendance)
-3. Cannot confirm for past sessions
-4. Cannot confirm for cancelled sessions
-5. Users with only SUPPORTER role are blocked from creating Attendance records
-6. One attendance record per user per session (unique constraint)
-7. Cancelled attendances free up capacity immediately
+1. Only users with ATHLETE role can confirm attendance (**✅ Backend Enforces**, ⚠️ Client hides UI)
+2. Cannot confirm if session is at capacity (unless replacing a cancelled attendance) (**✅ Backend Enforces**, ⚠️ Client validates for UX)
+3. Cannot confirm for past sessions (**✅ Backend Enforces**, ⚠️ Client validates for UX)
+4. Cannot confirm for cancelled sessions (**✅ Backend Enforces**, ⚠️ Client validates for UX)
+5. Users with only SUPPORTER role are blocked from creating Attendance records (**✅ Backend Enforces**, ⚠️ Client hides UI)
+6. One attendance record per user per session (unique constraint) (**✅ Backend Enforces**, ❌ Client skips - race conditions possible)
+7. Cancelled attendances free up capacity immediately (**✅ Backend Enforces**)
 
 **Example Flow:**
 ```
