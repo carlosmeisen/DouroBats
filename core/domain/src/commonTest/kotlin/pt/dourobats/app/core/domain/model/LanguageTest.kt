@@ -4,6 +4,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
+@OptIn(kotlin.experimental.ExperimentalNativeApi::class)
 class LanguageTest {
 
     @Test
