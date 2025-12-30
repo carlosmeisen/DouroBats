@@ -13,6 +13,9 @@ kotlin {
             implementation(libs.androidx.datastore.preferences)
             implementation(libs.koin.core)
         }
+        androidMain.dependencies {
+            implementation(libs.androidx.datastore.preferences.android)
+        }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
             implementation(libs.kotlinx.coroutines.test)

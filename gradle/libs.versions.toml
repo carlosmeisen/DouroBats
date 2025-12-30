@@ -63,6 +63,7 @@ kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serializa
 
 # DataStore
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences-core", version.ref = "androidx-datastore" }
+androidx-datastore-preferences-android = { module = "androidx.datastore:datastore-preferences", version.ref = "androidx-datastore" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
