@@ -26,6 +26,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import dourobats.features.settings.generated.resources.*
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import pt.dourobats.app.features.settings.components.ProfileEditDialog
 import pt.dourobats.app.features.settings.components.ProfileHeader
@@ -60,12 +62,12 @@ fun SettingsScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Settings",
+                text = stringResource(Res.string.settings_title),
                 style = MaterialTheme.typography.headlineLarge
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = "Profile and preferences",
+                text = stringResource(Res.string.settings_subtitle),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -88,14 +90,14 @@ fun SettingsScreen(
 
             // Account Section
             item {
-                SectionHeader(title = "Account")
+                SectionHeader(title = stringResource(Res.string.settings_section_account))
             }
 
             item {
                 SettingsItem(
                     icon = "\uD83D\uDCBC",
-                    title = "Display Name",
-                    subtitle = uiState.userProfile.displayName.ifEmpty { "Not set" },
+                    title = stringResource(Res.string.settings_display_name),
+                    subtitle = uiState.userProfile.displayName.ifEmpty { stringResource(Res.string.settings_not_set) },
                     onClick = { showEditDialog = true }
                 )
             }
@@ -103,8 +105,8 @@ fun SettingsScreen(
             item {
                 SettingsItem(
                     icon = "✉️",
-                    title = "Email",
-                    subtitle = uiState.userProfile.email.ifEmpty { "Not set" },
+                    title = stringResource(Res.string.settings_email),
+                    subtitle = uiState.userProfile.email.ifEmpty { stringResource(Res.string.settings_not_set) },
                     onClick = { } // Read-only
                 )
             }
@@ -112,8 +114,8 @@ fun SettingsScreen(
             item {
                 SettingsItem(
                     icon = "\uD83D\uDCF1",
-                    title = "Phone Number",
-                    subtitle = uiState.userProfile.phoneNumber.ifEmpty { "Not set" },
+                    title = stringResource(Res.string.settings_phone),
+                    subtitle = uiState.userProfile.phoneNumber.ifEmpty { stringResource(Res.string.settings_not_set) },
                     onClick = { showEditDialog = true }
                 )
             }
@@ -124,13 +126,13 @@ fun SettingsScreen(
 
             // Preferences Section
             item {
-                SectionHeader(title = "Preferences")
+                SectionHeader(title = stringResource(Res.string.settings_section_preferences))
             }
 
             item {
                 SettingsItem(
                     icon = "\uD83C\uDF10",
-                    title = "Language",
+                    title = stringResource(Res.string.settings_language),
                     subtitle = uiState.currentLanguage.displayName,
                     onClick = { showLanguageDialog = true }
                 )
@@ -139,7 +141,7 @@ fun SettingsScreen(
             item {
                 SettingsItem(
                     icon = "\uD83C\uDFA8",
-                    title = "Theme",
+                    title = stringResource(Res.string.settings_theme),
                     subtitle = uiState.currentTheme.displayName,
                     onClick = { showThemeDialog = true }
                 )
@@ -151,13 +153,13 @@ fun SettingsScreen(
 
             // Actions Section
             item {
-                SectionHeader(title = "Actions")
+                SectionHeader(title = stringResource(Res.string.settings_section_actions))
             }
 
             item {
                 ActionItem(
                     icon = "🚪",
-                    title = "Logout",
+                    title = stringResource(Res.string.settings_logout),
                     onClick = { viewModel.logout() }
                 )
             }
@@ -165,7 +167,7 @@ fun SettingsScreen(
             item {
                 ActionItem(
                     icon = "🗑️",
-                    title = "Delete Account",
+                    title = stringResource(Res.string.settings_delete_account),
                     onClick = { showDeleteDialog = true },
                     textColor = MaterialTheme.colorScheme.error
                 )
@@ -218,8 +220,8 @@ fun SettingsScreen(
     if (showDeleteDialog) {
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },
-            title = { Text("Delete Account") },
-            text = { Text("Are you sure you want to delete your account? This action cannot be undone.") },
+            title = { Text(stringResource(Res.string.settings_delete_account)) },
+            text = { Text(stringResource(Res.string.settings_delete_account_confirm)) },
             confirmButton = {
                 TextButton(
                     onClick = {
@@ -227,12 +229,12 @@ fun SettingsScreen(
                         showDeleteDialog = false
                     }
                 ) {
-                    Text("Delete", color = MaterialTheme.colorScheme.error)
+                    Text(stringResource(Res.string.settings_delete), color = MaterialTheme.colorScheme.error)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showDeleteDialog = false }) {
-                    Text("Cancel")
+                    Text(stringResource(Res.string.settings_cancel))
                 }
             }
         )

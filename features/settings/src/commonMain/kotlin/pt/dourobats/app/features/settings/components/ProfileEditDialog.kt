@@ -12,6 +12,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import dourobats.features.settings.generated.resources.*
+import org.jetbrains.compose.resources.stringResource
 import pt.dourobats.app.features.settings.ProfileEditState
 import pt.dourobats.app.features.settings.SettingsUiState
 
@@ -41,7 +43,7 @@ fun ProfileEditDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         title = {
-            Text(text = "Edit Profile")
+            Text(text = stringResource(Res.string.settings_edit_profile))
         },
         text = {
             Column(
@@ -52,7 +54,7 @@ fun ProfileEditDialog(
                 OutlinedTextField(
                     value = editState.displayName,
                     onValueChange = onDisplayNameChange,
-                    label = { Text("Display Name") },
+                    label = { Text(stringResource(Res.string.settings_display_name)) },
                     isError = validationErrors.displayName != null,
                     supportingText = validationErrors.displayName?.let {
                         { Text(it) }
@@ -65,7 +67,7 @@ fun ProfileEditDialog(
                 OutlinedTextField(
                     value = email,
                     onValueChange = { }, // Read-only, no action
-                    label = { Text("Email") },
+                    label = { Text(stringResource(Res.string.settings_email)) },
                     enabled = false, // Disabled to show it's read-only
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true
@@ -75,7 +77,7 @@ fun ProfileEditDialog(
                 OutlinedTextField(
                     value = editState.phoneNumber,
                     onValueChange = onPhoneNumberChange,
-                    label = { Text("Phone Number") },
+                    label = { Text(stringResource(Res.string.settings_phone)) },
                     isError = validationErrors.phoneNumber != null,
                     supportingText = validationErrors.phoneNumber?.let {
                         { Text(it) }
@@ -91,12 +93,12 @@ fun ProfileEditDialog(
                 onClick = onSave,
                 enabled = !validationErrors.hasErrors
             ) {
-                Text("Save")
+                Text(stringResource(Res.string.settings_save))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(stringResource(Res.string.settings_cancel))
             }
         },
         modifier = modifier

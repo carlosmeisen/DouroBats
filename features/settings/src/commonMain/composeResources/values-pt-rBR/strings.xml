@@ -4,8 +4,45 @@
     <string name="settings_title">Configurações</string>
     <string name="settings_subtitle">Perfil e preferências</string>
 
+    <!-- Section Headers -->
+    <string name="settings_section_account">Conta</string>
+    <string name="settings_section_preferences">Preferências</string>
+    <string name="settings_section_actions">Ações</string>
+
+    <!-- Account Section -->
+    <string name="settings_display_name">Nome de Exibição</string>
+    <string name="settings_email">E-mail</string>
+    <string name="settings_phone">Número de Telefone</string>
+    <string name="settings_not_set">Não definido</string>
+
+    <!-- Profile Editing -->
+    <string name="settings_edit_profile">Editar Perfil</string>
+    <string name="settings_save">Salvar</string>
+    <string name="settings_cancel">Cancelar</string>
+
     <!-- Language Settings -->
     <string name="settings_language">Idioma</string>
     <string name="settings_language_select">Selecionar Idioma</string>
     <string name="settings_language_description">Alterar idioma do aplicativo</string>
+
+    <!-- Theme Settings -->
+    <string name="settings_theme">Tema</string>
+    <string name="settings_theme_select">Selecionar Tema</string>
+
+    <!-- Actions -->
+    <string name="settings_logout">Sair</string>
+    <string name="settings_delete_account">Excluir Conta</string>
+    <string name="settings_delete_account_confirm">Tem certeza de que deseja excluir sua conta? Esta ação não pode ser desfeita.</string>
+    <string name="settings_delete">Excluir</string>
+
+    <!-- Validation Errors -->
+    <string name="error_display_name_empty">O nome de exibição não pode estar vazio</string>
+    <string name="error_display_name_short">Deve ter pelo menos 2 caracteres</string>
+    <string name="error_phone_empty">O número de telefone não pode estar vazio</string>
+    <string name="error_phone_invalid">Formato de número de telefone inválido</string>
+
+    <!-- Profile Header -->
+    <string name="settings_profile_picture">Foto de perfil</string>
+    <string name="settings_no_name">Sem nome definido</string>
+    <string name="settings_no_email">Sem e-mail definido</string>
 </resources>

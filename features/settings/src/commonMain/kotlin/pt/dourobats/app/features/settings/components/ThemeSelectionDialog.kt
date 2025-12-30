@@ -16,6 +16,8 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import dourobats.features.settings.generated.resources.*
+import org.jetbrains.compose.resources.stringResource
 import pt.dourobats.app.core.domain.model.Theme
 
 /**
@@ -36,7 +38,7 @@ fun ThemeSelectionDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         title = {
-            Text(text = "Select Theme")
+            Text(text = stringResource(Res.string.settings_theme_select))
         },
         text = {
             LazyColumn(
@@ -53,7 +55,7 @@ fun ThemeSelectionDialog(
         },
         confirmButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(stringResource(Res.string.settings_cancel))
             }
         },
         modifier = modifier

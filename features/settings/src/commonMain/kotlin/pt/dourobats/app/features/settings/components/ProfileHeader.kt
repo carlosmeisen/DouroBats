@@ -18,6 +18,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import dourobats.features.settings.generated.resources.*
+import org.jetbrains.compose.resources.stringResource
 import pt.dourobats.app.core.domain.model.UserProfile
 
 /**
@@ -95,13 +97,13 @@ fun ProfileHeader(
 
         // Display name
         Text(
-            text = userProfile.displayName.ifEmpty { "No name set" },
+            text = userProfile.displayName.ifEmpty { stringResource(Res.string.settings_no_name) },
             style = MaterialTheme.typography.headlineSmall
         )
 
         // Email
         Text(
-            text = userProfile.email.ifEmpty { "No email set" },
+            text = userProfile.email.ifEmpty { stringResource(Res.string.settings_no_email) },
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )

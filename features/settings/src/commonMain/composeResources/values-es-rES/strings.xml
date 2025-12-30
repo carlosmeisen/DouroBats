@@ -4,8 +4,45 @@
     <string name="settings_title">Ajustes</string>
     <string name="settings_subtitle">Perfil y preferencias</string>
 
+    <!-- Section Headers -->
+    <string name="settings_section_account">Cuenta</string>
+    <string name="settings_section_preferences">Preferencias</string>
+    <string name="settings_section_actions">Acciones</string>
+
+    <!-- Account Section -->
+    <string name="settings_display_name">Nombre Visible</string>
+    <string name="settings_email">Correo Electrónico</string>
+    <string name="settings_phone">Número de Teléfono</string>
+    <string name="settings_not_set">No establecido</string>
+
+    <!-- Profile Editing -->
+    <string name="settings_edit_profile">Editar Perfil</string>
+    <string name="settings_save">Guardar</string>
+    <string name="settings_cancel">Cancelar</string>
+
     <!-- Language Settings -->
     <string name="settings_language">Idioma</string>
     <string name="settings_language_select">Seleccionar Idioma</string>
     <string name="settings_language_description">Cambiar idioma de la aplicación</string>
+
+    <!-- Theme Settings -->
+    <string name="settings_theme">Tema</string>
+    <string name="settings_theme_select">Seleccionar Tema</string>
+
+    <!-- Actions -->
+    <string name="settings_logout">Cerrar Sesión</string>
+    <string name="settings_delete_account">Eliminar Cuenta</string>
+    <string name="settings_delete_account_confirm">¿Estás seguro de que quieres eliminar tu cuenta? Esta acción no se puede deshacer.</string>
+    <string name="settings_delete">Eliminar</string>
+
+    <!-- Validation Errors -->
+    <string name="error_display_name_empty">El nombre visible no puede estar vacío</string>
+    <string name="error_display_name_short">Debe tener al menos 2 caracteres</string>
+    <string name="error_phone_empty">El número de teléfono no puede estar vacío</string>
+    <string name="error_phone_invalid">Formato de número de teléfono no válido</string>
+
+    <!-- Profile Header -->
+    <string name="settings_profile_picture">Foto de perfil</string>
+    <string name="settings_no_name">Sin nombre establecido</string>
+    <string name="settings_no_email">Sin correo establecido</string>
 </resources>
