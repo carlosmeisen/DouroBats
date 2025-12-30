@@ -10,6 +10,11 @@ kotlin {
             implementation(projects.core.network)
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.datetime)
+            implementation(libs.androidx.datastore.preferences)
+            implementation(libs.koin.core)
+        }
+        androidMain.dependencies {
+            implementation(libs.androidx.datastore.preferences.android)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

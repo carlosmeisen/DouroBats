@@ -3,4 +3,9 @@
     <!-- Settings Screen -->
     <string name="settings_title">Settings</string>
     <string name="settings_subtitle">Profile and preferences</string>
+
+    <!-- Language Settings -->
+    <string name="settings_language">Language</string>
+    <string name="settings_language_select">Select Language</string>
+    <string name="settings_language_description">Change app display language</string>
 </resources>

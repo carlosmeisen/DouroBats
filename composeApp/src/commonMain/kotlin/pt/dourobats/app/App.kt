@@ -14,6 +14,11 @@ import dourobats.core.ui.generated.resources.nav_settings
 import dourobats.core.ui.generated.resources.nav_training
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.koin.compose.koinInject
+import pt.dourobats.app.core.domain.model.Language
+import pt.dourobats.app.core.domain.repository.SettingsRepository
+import pt.dourobats.app.core.ui.localization.LocalLanguage
+import pt.dourobats.app.core.ui.localization.changeLanguage
 import pt.dourobats.app.core.ui.theme.AppTheme
 import pt.dourobats.app.features.home.HomeScreen
 import pt.dourobats.app.features.schedule.ScheduleScreen
@@ -22,15 +27,46 @@ import pt.dourobats.app.features.settings.SettingsScreen
 @Composable
 @Preview
 fun App() {
-    AppTheme {
-        // TODO: Implement proper authentication flow with splash screen
-        // For now, we'll show the main app directly
-        var isAuthenticated by remember { mutableStateOf(true) }
+    AppContent()
+}
 
-        if (isAuthenticated) {
-            MainApp()
-        } else {
-            LoginScreen(onLoginSuccess = { isAuthenticated = true })
+@Composable
+private fun AppContent() {
+    val settingsRepository: SettingsRepository = koinInject()
+
+    // Load the saved language from DataStore
+    val savedLanguage by settingsRepository.languageFlow.collectAsState(
+        initial = Language.ENGLISH_US
+    )
+
+    // Track language state for triggering recomposition
+    var currentLanguage by remember { mutableStateOf(Language.ENGLISH_US) }
+
+    // Update currentLanguage when savedLanguage changes
+    LaunchedEffect(savedLanguage) {
+        if (currentLanguage != savedLanguage) {
+            currentLanguage = savedLanguage
+            changeLanguage(savedLanguage)
+        }
+    }
+
+    // Initialize locale on first composition
+    LaunchedEffect(Unit) {
+        changeLanguage(savedLanguage)
+    }
+
+    AppTheme {
+        // Provide the current language via CompositionLocal
+        CompositionLocalProvider(LocalLanguage provides currentLanguage) {
+            // TODO: Implement proper authentication flow with splash screen
+            // For now, we'll show the main app directly
+            var isAuthenticated by remember { mutableStateOf(true) }
+
+            if (isAuthenticated) {
+                MainApp()
+            } else {
+                LoginScreen(onLoginSuccess = { isAuthenticated = true })
+            }
         }
     }
 }

@@ -4,6 +4,14 @@ plugins {
     id("pt.dourobats.app.compose")
 }
 
+kotlin {
+    sourceSets {
+        commonMain.dependencies {
+            implementation(projects.core.domain)
+        }
+    }
+}
+
 compose.resources {
     publicResClass = true
 }
