@@ -9,6 +9,8 @@ import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import pt.dourobats.app.core.domain.model.Language
+import pt.dourobats.app.core.domain.model.Theme
+import pt.dourobats.app.core.domain.model.UserProfile
 import pt.dourobats.app.core.domain.repository.SettingsRepository
 import pt.dourobats.app.core.test.fakes.fakeSettingsRepository
 import kotlin.test.AfterTest
@@ -155,6 +157,176 @@ class SettingsViewModelTest {
 
         // Assert
         assertEquals(targetLanguage, viewModel.currentLanguage.value)
+        collectorJob.cancel()
+    }
+
+    @Test
+    fun `uiState contains user profile when repository has data`() = runTest(testDispatcher) {
+        // Arrange
+        val testProfile = UserProfile(
+            displayName = "Test User",
+            email = "test@example.com",
+            phoneNumber = "+351912345678",
+            profileImageUrl = null
+        )
+        repository = fakeSettingsRepository {
+            initialUserProfile = testProfile
+        }
+        viewModel = SettingsViewModel(repository)
+
+        val collectorJob = launch {
+            viewModel.uiState.collect {}
+        }
+
+        // Act
+        advanceUntilIdle()
+
+        // Assert
+        assertEquals(testProfile, viewModel.uiState.value.userProfile)
+        collectorJob.cancel()
+    }
+
+    @Test
+    fun `setTheme updates repository when DARK provided`() = runTest(testDispatcher) {
+        // Arrange
+        val targetTheme = Theme.DARK
+
+        // Act
+        viewModel.setTheme(targetTheme)
+        advanceUntilIdle()
+
+        // Assert
+        val theme = repository.getTheme()
+        assertEquals(targetTheme, theme)
+    }
+
+    @Test
+    fun `uiState contains theme when repository has data`() = runTest(testDispatcher) {
+        // Arrange
+        val testTheme = Theme.LIGHT
+        repository = fakeSettingsRepository {
+            initialTheme = testTheme
+        }
+        viewModel = SettingsViewModel(repository)
+
+        val collectorJob = launch {
+            viewModel.uiState.collect {}
+        }
+
+        // Act
+        advanceUntilIdle()
+
+        // Assert
+        assertEquals(testTheme, viewModel.uiState.value.currentTheme)
+        collectorJob.cancel()
+    }
+
+    @Test
+    fun `saveProfile updates repository when valid data provided`() = runTest(testDispatcher) {
+        // Arrange
+        val collectorJob = launch {
+            viewModel.uiState.collect {}
+        }
+        viewModel.enterEditMode()
+        viewModel.updateDisplayName("John Doe")
+        viewModel.updatePhoneNumber("+351912345678")
+
+        // Act
+        viewModel.saveProfile()
+        advanceUntilIdle()
+
+        // Assert
+        val profile = repository.getUserProfile()
+        assertEquals("John Doe", profile.displayName)
+        assertEquals("+351912345678", profile.phoneNumber)
+        collectorJob.cancel()
+    }
+
+    @Test
+    fun `enterEditMode loads current profile into edit state`() = runTest(testDispatcher) {
+        // Arrange
+        val testProfile = UserProfile(
+            displayName = "Initial Name",
+            email = "test@example.com",
+            phoneNumber = "+351111111111",
+            profileImageUrl = null
+        )
+        repository = fakeSettingsRepository {
+            initialUserProfile = testProfile
+        }
+        viewModel = SettingsViewModel(repository)
+
+        val collectorJob = launch {
+            viewModel.uiState.collect {}
+        }
+        advanceUntilIdle()
+
+        // Act
+        viewModel.enterEditMode()
+
+        // Assert
+        assertEquals("Initial Name", viewModel.editState.value.displayName)
+        assertEquals("+351111111111", viewModel.editState.value.phoneNumber)
+        collectorJob.cancel()
+    }
+
+    @Test
+    fun `updateDisplayName updates edit state`() = runTest(testDispatcher) {
+        // Arrange
+        viewModel.enterEditMode()
+
+        // Act
+        viewModel.updateDisplayName("New Name")
+
+        // Assert
+        assertEquals("New Name", viewModel.editState.value.displayName)
+    }
+
+    @Test
+    fun `updatePhoneNumber updates edit state`() = runTest(testDispatcher) {
+        // Arrange
+        viewModel.enterEditMode()
+
+        // Act
+        viewModel.updatePhoneNumber("+351999999999")
+
+        // Assert
+        assertEquals("+351999999999", viewModel.editState.value.phoneNumber)
+    }
+
+    @Test
+    fun `cancelEdit clears edit state`() = runTest(testDispatcher) {
+        // Arrange
+        viewModel.enterEditMode()
+        viewModel.updateDisplayName("Some Name")
+        viewModel.updatePhoneNumber("+351123456789")
+
+        // Act
+        viewModel.cancelEdit()
+
+        // Assert
+        assertEquals("", viewModel.editState.value.displayName)
+        assertEquals("", viewModel.editState.value.phoneNumber)
+    }
+
+    @Test
+    fun `saveProfile trims whitespace from fields`() = runTest(testDispatcher) {
+        // Arrange
+        val collectorJob = launch {
+            viewModel.uiState.collect {}
+        }
+        viewModel.enterEditMode()
+        viewModel.updateDisplayName("  John Doe  ")
+        viewModel.updatePhoneNumber("  +351912345678  ")
+
+        // Act
+        viewModel.saveProfile()
+        advanceUntilIdle()
+
+        // Assert
+        val profile = repository.getUserProfile()
+        assertEquals("John Doe", profile.displayName)
+        assertEquals("+351912345678", profile.phoneNumber)
         collectorJob.cancel()
     }
 }
