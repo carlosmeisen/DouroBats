@@ -9,8 +9,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
-import okio.Path.Companion.toPath
+import okio.FileSystem
 import pt.dourobats.app.core.domain.model.Language
+import kotlin.random.Random
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -26,8 +27,8 @@ class SettingsRepositoryImplTest {
 
     @BeforeTest
     fun setup() {
-        val tempDir = okio.FileSystem.SYSTEM_TEMPORARY_DIRECTORY
-        testFile = tempDir / "test_settings_${System.currentTimeMillis()}.preferences_pb"
+        val tempDir = FileSystem.SYSTEM_TEMPORARY_DIRECTORY
+        testFile = tempDir / "test_settings_${Random.nextLong()}.preferences_pb"
 
         dataStore = PreferenceDataStoreFactory.createWithPath(
             corruptionHandler = null,
@@ -42,7 +43,7 @@ class SettingsRepositoryImplTest {
     fun tearDown() {
         // Clean up test file
         try {
-            okio.FileSystem.SYSTEM.delete(testFile)
+            FileSystem.SYSTEM.delete(testFile, mustExist = false)
         } catch (e: Exception) {
             // Ignore if file doesn't exist
         }
