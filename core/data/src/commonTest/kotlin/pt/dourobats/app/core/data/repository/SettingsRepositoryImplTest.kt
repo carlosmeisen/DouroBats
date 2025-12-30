@@ -11,6 +11,8 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import okio.FileSystem
 import pt.dourobats.app.core.domain.model.Language
+import pt.dourobats.app.core.domain.model.Theme
+import pt.dourobats.app.core.domain.model.UserProfile
 import kotlin.random.Random
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
@@ -226,5 +228,147 @@ class SettingsRepositoryImplTest {
         // Assert
         assertEquals(targetLanguage, firstResult)
         assertEquals(targetLanguage, secondResult)
+    }
+
+    @Test
+    fun `themeFlow is SYSTEM when no preference set`() = runTest(testDispatcher) {
+        // Arrange
+        val collectorJob = launch {
+            repository.themeFlow.collect {}
+        }
+
+        // Act
+        advanceUntilIdle()
+        val theme = repository.themeFlow.first()
+
+        // Assert
+        assertEquals(Theme.SYSTEM, theme)
+        collectorJob.cancel()
+    }
+
+    @Test
+    fun `setTheme is successful when DARK provided`() = runTest(testDispatcher) {
+        // Arrange
+        val targetTheme = Theme.DARK
+
+        // Act
+        repository.setTheme(targetTheme)
+        advanceUntilIdle()
+
+        // Assert
+        val theme = repository.getTheme()
+        assertEquals(targetTheme, theme)
+    }
+
+    @Test
+    fun `setTheme is successful when LIGHT provided`() = runTest(testDispatcher) {
+        // Arrange
+        val targetTheme = Theme.LIGHT
+
+        // Act
+        repository.setTheme(targetTheme)
+        advanceUntilIdle()
+
+        // Assert
+        val theme = repository.getTheme()
+        assertEquals(targetTheme, theme)
+    }
+
+    @Test
+    fun `themeFlow is updated when setTheme called`() = runTest(testDispatcher) {
+        // Arrange
+        val collectorJob = launch {
+            repository.themeFlow.collect {}
+        }
+        val targetTheme = Theme.DARK
+
+        // Act
+        repository.setTheme(targetTheme)
+        advanceUntilIdle()
+
+        // Assert
+        val theme = repository.themeFlow.first()
+        assertEquals(targetTheme, theme)
+        collectorJob.cancel()
+    }
+
+    @Test
+    fun `userProfileFlow returns empty profile when no data set`() = runTest(testDispatcher) {
+        // Arrange
+        val collectorJob = launch {
+            repository.userProfileFlow.collect {}
+        }
+
+        // Act
+        advanceUntilIdle()
+        val profile = repository.userProfileFlow.first()
+
+        // Assert
+        assertEquals("", profile.displayName)
+        assertEquals("", profile.email)
+        assertEquals("", profile.phoneNumber)
+        assertEquals(null, profile.profileImageUrl)
+        collectorJob.cancel()
+    }
+
+    @Test
+    fun `updateUserProfile is successful when valid profile provided`() = runTest(testDispatcher) {
+        // Arrange
+        val targetProfile = UserProfile(
+            displayName = "John Doe",
+            email = "john@example.com",
+            phoneNumber = "+351912345678",
+            profileImageUrl = null
+        )
+
+        // Act
+        repository.updateUserProfile(targetProfile)
+        advanceUntilIdle()
+
+        // Assert
+        val profile = repository.getUserProfile()
+        assertEquals(targetProfile, profile)
+    }
+
+    @Test
+    fun `updateUserProfile is successful when profile with image URL provided`() = runTest(testDispatcher) {
+        // Arrange
+        val targetProfile = UserProfile(
+            displayName = "Jane Smith",
+            email = "jane@example.com",
+            phoneNumber = "+351987654321",
+            profileImageUrl = "https://example.com/avatar.jpg"
+        )
+
+        // Act
+        repository.updateUserProfile(targetProfile)
+        advanceUntilIdle()
+
+        // Assert
+        val profile = repository.getUserProfile()
+        assertEquals(targetProfile, profile)
+    }
+
+    @Test
+    fun `userProfileFlow is updated when updateUserProfile called`() = runTest(testDispatcher) {
+        // Arrange
+        val collectorJob = launch {
+            repository.userProfileFlow.collect {}
+        }
+        val targetProfile = UserProfile(
+            displayName = "Test User",
+            email = "test@example.com",
+            phoneNumber = "+351999999999",
+            profileImageUrl = null
+        )
+
+        // Act
+        repository.updateUserProfile(targetProfile)
+        advanceUntilIdle()
+
+        // Assert
+        val profile = repository.userProfileFlow.first()
+        assertEquals(targetProfile, profile)
+        collectorJob.cancel()
     }
 }
