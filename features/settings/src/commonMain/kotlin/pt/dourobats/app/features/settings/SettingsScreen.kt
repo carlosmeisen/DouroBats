@@ -17,6 +17,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -198,8 +199,14 @@ fun SettingsScreen(
         )
     }
 
+    // Only call enterEditMode when dialog is first shown
+    LaunchedEffect(showEditDialog) {
+        if (showEditDialog) {
+            viewModel.enterEditMode()
+        }
+    }
+
     if (showEditDialog) {
-        viewModel.enterEditMode()
         ProfileEditDialog(
             editState = editState,
             email = uiState.userProfile.email,
