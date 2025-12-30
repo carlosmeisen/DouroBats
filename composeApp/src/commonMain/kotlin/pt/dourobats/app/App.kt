@@ -1,5 +1,6 @@
 package pt.dourobats.app
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -16,6 +17,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.koinInject
 import pt.dourobats.app.core.domain.model.Language
+import pt.dourobats.app.core.domain.model.Theme
 import pt.dourobats.app.core.domain.repository.SettingsRepository
 import pt.dourobats.app.core.ui.localization.LocalLanguage
 import pt.dourobats.app.core.ui.localization.changeLanguage
@@ -33,10 +35,16 @@ fun App() {
 @Composable
 private fun AppContent() {
     val settingsRepository: SettingsRepository = koinInject()
+    val systemDarkTheme = isSystemInDarkTheme()
 
     // Load the saved language from DataStore
     val savedLanguage by settingsRepository.languageFlow.collectAsState(
         initial = Language.ENGLISH_US
+    )
+
+    // Load the saved theme from DataStore
+    val savedTheme by settingsRepository.themeFlow.collectAsState(
+        initial = Theme.SYSTEM
     )
 
     // Track language state for triggering recomposition
@@ -55,7 +63,14 @@ private fun AppContent() {
         changeLanguage(savedLanguage)
     }
 
-    AppTheme {
+    // Determine if dark theme should be used based on user preference
+    val useDarkTheme = when (savedTheme) {
+        Theme.LIGHT -> false
+        Theme.DARK -> true
+        Theme.SYSTEM -> systemDarkTheme
+    }
+
+    AppTheme(darkTheme = useDarkTheme) {
         // Provide the current language via CompositionLocal
         CompositionLocalProvider(LocalLanguage provides currentLanguage) {
             // TODO: Implement proper authentication flow with splash screen
